@@ -23,8 +23,8 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=\Output
-OutputBaseFilename=TurnMeDown
+OutputDir=D:\Development\GitHub\TurnMeDown\Output
+OutputBaseFilename=InstallTurnMeDown
 SetupIconFile=D:\Development\GitHub\TurnMeDown\8669809.ico
 Compression=lzma
 SolidCompression=yes
