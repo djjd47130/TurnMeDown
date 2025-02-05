@@ -101,8 +101,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>8669809.ico</Icon_MainIcon>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.1.0.0;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.1;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
+        <VerInfo_MinorVer>2</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.2.0.0;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.2;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
         <DCC_ExeOutput>.\Bin</DCC_ExeOutput>
     </PropertyGroup>
     <ItemGroup>
@@ -111,7 +111,6 @@
         </DelphiCompile>
         <DCCReference Include="uMain.pas">
             <Form>frmMain</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

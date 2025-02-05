@@ -2,6 +2,7 @@ program TurnMeDown;
 
 uses
   Vcl.Forms,
+  Winapi.Windows,
   uMain in 'uMain.pas' {frmMain},
   Vcl.Themes,
   Vcl.Styles;

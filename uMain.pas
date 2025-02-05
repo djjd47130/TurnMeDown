@@ -31,6 +31,8 @@ type
     mExit: TMenuItem;
     AppEvents: TApplicationEvents;
     pHint: TRzPanel;
+    swAutoStart: TToggleSwitch;
+    StaticText3: TStaticText;
     procedure VolVolumeChanged(Sender: TObject; const Volume: Integer);
     procedure TmrTimer(Sender: TObject);
     procedure tkMaxVolChange(Sender: TObject);
@@ -47,6 +49,7 @@ type
     procedure AppEventsHint(Sender: TObject);
     procedure TrayPopPopup(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure swAutoStartClick(Sender: TObject);
   private
     FMutex: THandle;
     FLoading: Boolean;
@@ -73,6 +76,59 @@ uses
 const
   SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
 
+procedure AddAppToStartup(const AppName, AppPath: string);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey('Software\Microsoft\Windows\CurrentVersion\Run', True) then
+    begin
+      Reg.WriteString(AppName, AppPath);
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
+procedure RemoveAppFromStartup(const AppName: string);
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey('Software\Microsoft\Windows\CurrentVersion\Run', False) then
+    begin
+      if Reg.ValueExists(AppName) then
+        Reg.DeleteValue(AppName);
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
+function IsAppInStartup(const AppName: string): Boolean;
+var
+  Reg: TRegistry;
+begin
+  Result := False; // Default to false
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly('Software\Microsoft\Windows\CurrentVersion\Run') then
+    begin
+      Result := Reg.ValueExists(AppName);
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
 procedure TfrmMain.AppEventsHint(Sender: TObject);
 begin
   pHint.Caption:= Application.Hint;
@@ -86,6 +142,7 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+
   FMutex := CreateMutex(nil, False, 'TurnMeDown');
   if GetLastError = ERROR_ALREADY_EXISTS then begin
     //MessageDlg('Another instance of this application is already running.', mtWarning, [mbOK], 0);
@@ -117,8 +174,14 @@ var
   ExistingWnd: HWND;
 begin
   ExistingWnd := FindWindow(nil, 'Turn Me Down');
-  if ExistingWnd <> 0 then begin
-    ShowWindow(ExistingWnd, SW_SHOWNORMAL);
+  if ExistingWnd <> 0 then
+  begin
+    // Restore the window if it is minimized
+    if IsIconic(ExistingWnd) then
+      ShowWindow(ExistingWnd, SW_RESTORE)
+    else
+      ShowWindow(ExistingWnd, SW_SHOW);
+    // Bring the window to the front
     SetForegroundWindow(ExistingWnd);
   end;
 end;
@@ -161,6 +224,12 @@ begin
   if FLoading then Exit;
   FLoading:= True;
   try
+
+    if IsAppInStartup('TurnMeDown') then
+      swAutoStart.State:= TToggleSwitchState.tssOn
+    else
+      swAutoStart.State:= TToggleSwitchState.tssOff;
+
     R:= TRegistry.Create(KEY_READ or KEY_WRITE);
     try
       R.RootKey:= HKEY_CURRENT_USER;
@@ -169,6 +238,8 @@ begin
         Result:= R.CreateKey(SETTINGS_KEY);
         if Result then begin
           //Initialize defaults...
+          if not IsAppInStartup('TurnMeDown') then
+            AddAppToStartup('TurnMeDown', Application.ExeName);
           Result:= R.OpenKey(SETTINGS_KEY, True);
           if Result then begin
             R.WriteInteger('Active', 1);
@@ -257,6 +328,14 @@ end;
 procedure TfrmMain.swActiveClick(Sender: TObject);
 begin
   SaveOptions;
+end;
+
+procedure TfrmMain.swAutoStartClick(Sender: TObject);
+begin
+  case swAutoStart.State of
+    tssOff: RemoveAppFromStartup('TurnMeDown');
+    tssOn:  AddAppToStartup('TurnMeDown', Application.ExeName);
+  end;
 end;
 
 procedure TfrmMain.tkMaxVolChange(Sender: TObject);

@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Turn Me Down"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.2"
 #define MyAppPublisher "Jerry Dodge"
-#define MyAppURL "https://jerrydodge.com"
+#define MyAppURL "https://github.com/djjd47130/TurnMeDown"
 #define MyAppExeName "TurnMeDown.exe"
 
 [Setup]
@@ -18,7 +18,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={autopf}\JD Software\{#MyAppName}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
@@ -29,6 +29,7 @@ SetupIconFile=D:\Development\GitHub\TurnMeDown\8669809.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+UninstallDisplayIcon={app}\TurnMeDown.exe
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

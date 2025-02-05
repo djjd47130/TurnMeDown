@@ -43,8 +43,6 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = False
     TabOrder = 3
-    ExplicitTop = 178
-    ExplicitWidth = 391
   end
   object tpStart: TTimePicker
     Left = 8
@@ -57,7 +55,6 @@ object frmMain: TfrmMain
     Font.Name = 'Segoe UI'
     Font.Style = []
     MinuteIncrement = 15
-    ShowHint = False
     TabOrder = 1
     Time = 0.875000000000000000
     TimeFormat = 'h:mm AMPM'
@@ -75,7 +72,6 @@ object frmMain: TfrmMain
     Font.Name = 'Segoe UI'
     Font.Style = []
     MinuteIncrement = 15
-    ShowHint = False
     TabOrder = 2
     Time = 0.333333333333333300
     TimeFormat = 'h:mm AMPM'
@@ -127,8 +123,6 @@ object frmMain: TfrmMain
     Caption = '5% During Quiet Hours'
     TabOrder = 6
     OnMouseDown = FormMouseDown
-    ExplicitTop = 140
-    ExplicitWidth = 433
   end
   object pHint: TRzPanel
     Left = 0
@@ -138,15 +132,41 @@ object frmMain: TfrmMain
     Align = alBottom
     BorderOuter = fsNone
     BorderSides = [sdTop]
+    Color = 15987699
     TabOrder = 7
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitLeft = 3
-    ExplicitTop = 244
-    ExplicitWidth = 341
+  end
+  object swAutoStart: TToggleSwitch
+    Left = 243
+    Top = 17
+    Width = 84
+    Height = 20
+    Cursor = crHandPoint
+    Hint = 'Whether to start with Windows'
+    Alignment = taLeftJustify
+    Anchors = [akTop, akRight]
+    ParentShowHint = False
+    ShowHint = False
+    State = tssOn
+    StateCaptions.CaptionOn = 'Yes'
+    StateCaptions.CaptionOff = 'No'
+    TabOrder = 8
+    OnClick = swAutoStartClick
+  end
+  object StaticText3: TStaticText
+    Left = 149
+    Top = 17
+    Width = 85
+    Height = 22
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Auto Start:'
+    TabOrder = 9
+    OnMouseDown = FormMouseDown
   end
   object Vol: TJDVolumeControls
-    Volume = 10
+    Volume = 4
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 56
