@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Turn Me Down"
-#define MyAppVersion "0.2"
+#define MyAppVersion "0.3"
 #define MyAppPublisher "Jerry Dodge"
 #define MyAppURL "https://github.com/djjd47130/TurnMeDown"
 #define MyAppExeName "TurnMeDown.exe"

@@ -1,13 +1,14 @@
-object frmMain: TfrmMain
+object frmTurnMeDownMain: TfrmTurnMeDownMain
   Left = 0
   Top = 0
+  Margins.Right = 5
   AlphaBlend = True
   AlphaBlendValue = 220
-  BorderIcons = [biSystemMenu]
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Turn Me Down'
-  ClientHeight = 264
-  ClientWidth = 335
+  ClientHeight = 430
+  ClientWidth = 343
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -15,21 +16,21 @@ object frmMain: TfrmMain
   Font.Height = -15
   Font.Name = 'Tahoma'
   Font.Style = [fsBold]
+  KeyPreview = True
   OldCreateOrder = False
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyUp = FormKeyUp
   OnMouseDown = FormMouseDown
-  DesignSize = (
-    335
-    264)
+  OnMouseWheel = FormMouseWheel
   PixelsPerInch = 96
   TextHeight = 18
   object tkMaxVol: TRzTrackBar
     AlignWithMargins = True
     Left = 3
-    Top = 198
-    Width = 329
+    Top = 147
+    Width = 337
     Height = 40
     Cursor = crHandPoint
     Hint = 'The maximum volume during quiet hours'
@@ -39,155 +40,287 @@ object frmMain: TfrmMain
     TrackWidth = 16
     Transparent = True
     OnChange = tkMaxVolChange
-    Align = alBottom
+    Align = alTop
     ParentShowHint = False
     ShowHint = False
-    TabOrder = 3
-  end
-  object tpStart: TTimePicker
-    Left = 8
-    Top = 83
-    Cursor = crHandPoint
-    Hint = 'The time to start enforcing volume rules'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    MinuteIncrement = 15
-    TabOrder = 1
-    Time = 0.875000000000000000
-    TimeFormat = 'h:mm AMPM'
-    OnChange = tpStartChange
-  end
-  object tpStop: TTimePicker
-    Left = 177
-    Top = 83
-    Cursor = crHandPoint
-    Hint = 'The time to stop enforcing volume rules'
-    Anchors = [akTop, akRight]
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    MinuteIncrement = 15
-    TabOrder = 2
-    Time = 0.333333333333333300
-    TimeFormat = 'h:mm AMPM'
-    OnChange = tpStopChange
-  end
-  object StaticText1: TStaticText
-    Left = 8
-    Top = 55
-    Width = 150
-    Height = 22
-    Alignment = taCenter
-    AutoSize = False
-    Caption = 'Quiet Time Start'
-    TabOrder = 4
-    OnMouseDown = FormMouseDown
-  end
-  object StaticText2: TStaticText
-    Left = 177
-    Top = 55
-    Width = 150
-    Height = 22
-    Alignment = taCenter
-    Anchors = [akTop, akRight]
-    AutoSize = False
-    Caption = 'Quiet Time Stop'
-    TabOrder = 5
-    OnMouseDown = FormMouseDown
-  end
-  object swActive: TToggleSwitch
-    Left = 8
-    Top = 17
-    Height = 20
-    Cursor = crHandPoint
-    Hint = 'Whether volume rules are enabled'
-    ParentShowHint = False
-    ShowHint = False
-    State = tssOn
     TabOrder = 0
-    OnClick = swActiveClick
+    ExplicitLeft = 8
+    ExplicitTop = 150
   end
   object lblMaxVol: TStaticText
     Left = 0
-    Top = 175
-    Width = 335
+    Top = 124
+    Width = 343
     Height = 20
-    Align = alBottom
+    Align = alTop
     Alignment = taCenter
     AutoSize = False
     Caption = '5% During Quiet Hours'
-    TabOrder = 6
+    TabOrder = 1
     OnMouseDown = FormMouseDown
+    ExplicitLeft = 16
+    ExplicitTop = 284
+    ExplicitWidth = 335
   end
   object pHint: TRzPanel
     Left = 0
-    Top = 241
-    Width = 335
+    Top = 407
+    Width = 343
     Height = 23
     Align = alBottom
     BorderOuter = fsNone
     BorderSides = [sdTop]
     Color = 15987699
-    TabOrder = 7
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
     Transparent = True
     OnMouseDown = FormMouseDown
+    ExplicitTop = 241
+    ExplicitWidth = 335
   end
-  object swAutoStart: TToggleSwitch
-    Left = 243
-    Top = 17
-    Width = 84
-    Height = 20
-    Cursor = crHandPoint
-    Hint = 'Whether to start with Windows'
-    Alignment = taLeftJustify
-    Anchors = [akTop, akRight]
-    ParentShowHint = False
-    ShowHint = False
-    State = tssOn
-    StateCaptions.CaptionOn = 'Yes'
-    StateCaptions.CaptionOff = 'No'
-    TabOrder = 8
-    OnClick = swAutoStartClick
-  end
-  object StaticText3: TStaticText
-    Left = 149
-    Top = 17
-    Width = 85
-    Height = 22
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = 'Auto Start:'
-    TabOrder = 9
+  object RzPanel1: TRzPanel
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 337
+    Height = 41
+    Align = alTop
+    BorderOuter = fsNone
+    TabOrder = 3
+    Transparent = True
     OnMouseDown = FormMouseDown
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 336
+    object swActive: TToggleSwitch
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
+      Width = 121
+      Height = 35
+      Cursor = crHandPoint
+      Hint = 'Whether volume rules are enabled'
+      Align = alLeft
+      ParentShowHint = False
+      ShowHint = False
+      State = tssOn
+      StateCaptions.CaptionOn = 'Enabled'
+      StateCaptions.CaptionOff = 'Disabled'
+      TabOrder = 0
+      OnClick = swActiveClick
+      ExplicitHeight = 20
+    end
+    object swAutoStart: TToggleSwitch
+      AlignWithMargins = True
+      Left = 174
+      Top = 3
+      Width = 160
+      Height = 35
+      Cursor = crHandPoint
+      Hint = 'Whether to start with Windows'
+      Align = alRight
+      Alignment = taLeftJustify
+      ParentShowHint = False
+      ShowHint = False
+      State = tssOn
+      StateCaptions.CaptionOn = 'Auto Start On'
+      StateCaptions.CaptionOff = 'Auto Start Off'
+      TabOrder = 1
+      OnClick = swAutoStartClick
+      ExplicitHeight = 20
+    end
+  end
+  object pQuietTimes: TRzPanel
+    Left = 0
+    Top = 47
+    Width = 343
+    Height = 77
+    Align = alTop
+    BorderOuter = fsNone
+    Color = 15987699
+    TabOrder = 4
+    Transparent = True
+    OnMouseDown = FormMouseDown
+    OnResize = pQuietTimesResize
+    ExplicitTop = 36
+    ExplicitWidth = 824
+    object pQuietStart: TRzPanel
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
+      Width = 160
+      Height = 71
+      Align = alLeft
+      BorderOuter = fsNone
+      TabOrder = 0
+      Transparent = True
+      OnMouseDown = FormMouseDown
+      object tpStart: TTimePicker
+        AlignWithMargins = True
+        Left = 3
+        Top = 25
+        Width = 154
+        Cursor = crHandPoint
+        Hint = 'The time to start enforcing volume rules'
+        Align = alTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        MinuteIncrement = 15
+        TabOrder = 0
+        Time = 0.875000000000000000
+        TimeFormat = 'h:mm AMPM'
+        OnChange = tpStartChange
+        ExplicitLeft = 0
+        ExplicitTop = 28
+        ExplicitWidth = 160
+      end
+      object StaticText1: TStaticText
+        Left = 0
+        Top = 0
+        Width = 160
+        Height = 22
+        Align = alTop
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Quiet Time Start'
+        TabOrder = 1
+        OnMouseDown = FormMouseDown
+        ExplicitLeft = 8
+        ExplicitTop = 5
+        ExplicitWidth = 150
+      end
+    end
+    object pQuietStop: TRzPanel
+      AlignWithMargins = True
+      Left = 169
+      Top = 3
+      Width = 171
+      Height = 71
+      Align = alClient
+      BorderOuter = fsNone
+      Color = 15987699
+      TabOrder = 1
+      Transparent = True
+      OnMouseDown = FormMouseDown
+      ExplicitWidth = 160
+      object tpStop: TTimePicker
+        AlignWithMargins = True
+        Left = 3
+        Top = 25
+        Width = 165
+        Cursor = crHandPoint
+        Hint = 'The time to stop enforcing volume rules'
+        Align = alTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        MinuteIncrement = 15
+        TabOrder = 0
+        Time = 0.333333333333333300
+        TimeFormat = 'h:mm AMPM'
+        OnChange = tpStopChange
+        ExplicitLeft = 51
+        ExplicitTop = 39
+        ExplicitWidth = 150
+      end
+      object StaticText2: TStaticText
+        Left = 0
+        Top = 0
+        Width = 171
+        Height = 22
+        Align = alTop
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Quiet Time Stop'
+        TabOrder = 1
+        OnMouseDown = FormMouseDown
+        ExplicitLeft = 51
+        ExplicitTop = 11
+        ExplicitWidth = 150
+      end
+    end
+  end
+  object pStatus: TRzPanel
+    Left = 0
+    Top = 377
+    Width = 343
+    Height = 30
+    Align = alBottom
+    BorderOuter = fsNone
+    BorderSides = [sdTop]
+    Color = 15987699
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clLime
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 5
+    Transparent = True
+    OnMouseDown = FormMouseDown
+    object lblStatus: TLabel
+      Left = 0
+      Top = 0
+      Width = 343
+      Height = 30
+      Align = alClient
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Enforcing Quiet Time'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Layout = tlCenter
+      Visible = False
+      StyleElements = [seClient, seBorder]
+      OnMouseDown = FormMouseDown
+      ExplicitLeft = 80
+      ExplicitTop = 8
+      ExplicitWidth = 54
+      ExplicitHeight = 19
+    end
   end
   object Vol: TJDVolumeControls
-    Volume = 4
+    Volume = 6
     Muted = False
     OnVolumeChanged = VolVolumeChanged
-    Left = 56
-    Top = 128
+    Left = 16
+    Top = 240
   end
   object Tmr: TTimer
     Interval = 250
     OnTimer = TmrTimer
-    Left = 96
-    Top = 128
+    Left = 56
+    Top = 240
   end
   object Tray: TRzTrayIcon
+    Animate = True
+    HideOnStartup = True
     Hint = 'Turn Me Down'
     PopupMenu = TrayPop
-    Left = 136
-    Top = 128
+    Icons = Img32
+    Interval = 500
+    OnQueryEndSession = TrayQueryEndSession
+    Left = 96
+    Top = 240
   end
   object TrayPop: TPopupMenu
     OnPopup = TrayPopPopup
-    Left = 176
-    Top = 128
+    Left = 136
+    Top = 240
     object mShowHide: TMenuItem
       Caption = 'Show'
       OnClick = mShowHideClick
@@ -196,6 +329,10 @@ object frmMain: TfrmMain
       Caption = 'Enabled'
       Checked = True
       OnClick = mEnabledClick
+    end
+    object mAbout: TMenuItem
+      Caption = 'About'
+      OnClick = mAboutClick
     end
     object N1: TMenuItem
       Caption = '-'
@@ -207,7 +344,180 @@ object frmMain: TfrmMain
   end
   object AppEvents: TApplicationEvents
     OnHint = AppEventsHint
-    Left = 224
-    Top = 128
+    Left = 184
+    Top = 240
+  end
+  object Img32: TImageList
+    Left = 56
+    Top = 288
+    Bitmap = {
+      494C010102000800040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000001000000001002000000000000010
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000B2EAB200D9F4D900000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000C8C8F500E4E4FA00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000A7E6A7004DCE4D00BDECBD00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000C0C0F4008181E800D0D0F600000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000E1F6E100E1F6E100A7E6
+      A700A7E6A700BDECBD00BDECBD0000000000F0FBF00000000000000000000000
+      000000000000E9F9E900000000000000000000000000E9E9FB00E9E9FB00C0C0
+      F400C0C0F400D0D0F600D0D0F60000000000F4F4FD0000000000000000000000
+      000000000000EFEFFC0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000007CDB7C008CDF8C008CDF8C00BDEC
+      BD0000000000BDECBD00BDECBD0000000000D9F4D9007CDB7C00000000000000
+      0000D0F2D0007CDB7C000000000000000000A2A2EE00ADADF000ADADF000D0D0
+      F60000000000D0D0F600D0D0F60000000000E4E4FA00A2A2EE00000000000000
+      0000DDDDF900A2A2EE0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000B9000000000000000000000000
+      000000000000BDECBD00BDECBD000000000000000000D0F2D0007CDB7C00C7EF
+      C7007CDB7C000000000000000000000000004A4ADF0000000000000000000000
+      000000000000D0D0F600D0D0F6000000000000000000DDDDF900A2A2EE00D7D7
+      F700A2A2EE000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000B9000000000000000000000000
+      000000000000BDECBD00BDECBD00000000000000000000000000A7E6A70000B9
+      0000F0FBF0000000000000000000000000004A4ADF0000000000000000000000
+      000000000000D0D0F600D0D0F600000000000000000000000000C0C0F4004A4A
+      DF00F4F4FD000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000B9000000000000000000000000
+      000000000000BDECBD00BDECBD000000000000000000D0F2D0007CDB7C00C7EF
+      C7007CDB7C000000000000000000000000004A4ADF0000000000000000000000
+      000000000000D0D0F600D0D0F6000000000000000000DDDDF900A2A2EE00D7D7
+      F700A2A2EE000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000007CDB7C008CDF8C008CDF8C00BDEC
+      BD0000000000BDECBD00BDECBD0000000000D9F4D9007CDB7C00000000000000
+      0000D0F2D0007CDB7C000000000000000000A2A2EE00ADADF000ADADF000D0D0
+      F60000000000D0D0F600D0D0F60000000000E4E4FA00A2A2EE00000000000000
+      0000DDDDF900A2A2EE0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000E1F6E100E1F6E100A7E6
+      A700A7E6A700BDECBD00BDECBD0000000000F0FBF00000000000000000000000
+      000000000000E9F9E900000000000000000000000000E9E9FB00E9E9FB00C0C0
+      F400C0C0F400D0D0F600D0D0F60000000000F4F4FD0000000000000000000000
+      000000000000EFEFFC0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000A7E6A7004DCE4D00BDECBD00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000C0C0F4008181E800D0D0F600000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000B2EAB200D9F4D900000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000C8C8F500E4E4FA00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000100000000100010000000000800000000000000000000000
+      000000000000000000000000FFFFFF00FFFFFFFF00000000FFFFFFFF00000000
+      FFFFFFFF00000000F9FFF9FF00000000F1FFF1FF00000000817B817B00000000
+      0933093300000000798779870000000079C779C7000000007987798700000000
+      0933093300000000817B817B00000000F1FFF1FF00000000F9FFF9FF00000000
+      FFFFFFFF00000000FFFFFFFF00000000}
+  end
+  object Glyphs: TJDFontGlyphs
+    ImageLists = <
+      item
+        ImageList = Img32
+      end>
+    Glyphs = <
+      item
+        Caption = 'New Glyph'
+        Glyph = #59215
+        Color = fcGreen
+        Scale = 0.960000000000000000
+        Ref.FontName = 'Segoe Fluent Icons'
+        Ref.Glyph = #59215
+        Ref.Color = clLime
+        Ref.StandardColor = fcGreen
+        Ref.UseStandardColor = True
+      end
+      item
+        Caption = 'New Glyph'
+        Glyph = #59215
+        Color = fcRed
+        Scale = 0.960000000000000000
+        Ref.FontName = 'Segoe Fluent Icons'
+        Ref.Glyph = #59215
+        Ref.Color = clBlue
+        Ref.StandardColor = fcRed
+        Ref.UseStandardColor = True
+      end>
+    Left = 16
+    Top = 288
   end
 end
