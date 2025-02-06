@@ -4,22 +4,22 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.SysUtils, System.Variants, System.Classes,
+  System.Types, System.UITypes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   Vcl.WinXPickers, Vcl.StdCtrls, Vcl.WinXCtrls,
   Vcl.Menus, Vcl.Themes, Vcl.Styles, Vcl.ComCtrls, Vcl.AppEvnts,
   Registry,
-  JD.Common, JD.VolumeControls,
+  JD.Common, JD.VolumeControls, JD.FontGlyphs, JD.Ctrls,
+  JD.Ctrls.Gauges,
   RzTrkBar, RzTray, RzPanel,
-  uAbout, System.ImageList, Vcl.ImgList, JD.FontGlyphs;
+  uAbout, System.ImageList, Vcl.ImgList;
 
 type
   TfrmTurnMeDownMain = class(TForm)
     Vol: TJDVolumeControls;
-    tkMaxVol: TRzTrackBar;
     Tmr: TTimer;
     Tray: TRzTrayIcon;
-    lblMaxVol: TStaticText;
     TrayPop: TPopupMenu;
     mShowHide: TMenuItem;
     mEnabled: TMenuItem;
@@ -28,7 +28,7 @@ type
     AppEvents: TApplicationEvents;
     pHint: TRzPanel;
     mAbout: TMenuItem;
-    RzPanel1: TRzPanel;
+    pTopControl: TRzPanel;
     pQuietTimes: TRzPanel;
     swActive: TToggleSwitch;
     swAutoStart: TToggleSwitch;
@@ -40,11 +40,12 @@ type
     StaticText2: TStaticText;
     pStatus: TRzPanel;
     lblStatus: TLabel;
-    Img32: TImageList;
-    Glyphs: TJDFontGlyphs;
+    TrayImg: TImageList;
+    TrayGlyphs: TJDFontGlyphs;
+    gVol: TJDGauge;
+    gMax: TJDGauge;
     procedure VolVolumeChanged(Sender: TObject; const Volume: Integer);
     procedure TmrTimer(Sender: TObject);
-    procedure tkMaxVolChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure tpStartChange(Sender: TObject);
     procedure tpStopChange(Sender: TObject);
@@ -66,9 +67,23 @@ type
       var AllowSessionToEnd: Boolean);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure gVolMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure gVolMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure gVolMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure gMaxMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure gMaxMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure gMaxMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FMutex: THandle;
     FLoading: Boolean;
+    FChangingMax: Boolean;
+    FChangingVol: Boolean;
     procedure AssertVolume;
     procedure BringExistingInstanceToFront;
     procedure ShowAbout;
@@ -184,6 +199,12 @@ begin
   pHint.Caption:= Application.Hint;
 end;
 
+procedure TfrmTurnMeDownMain.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  //
+end;
+
 procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   case MessageDlg('Are you sure you wish to exit Turn Me Down?',
@@ -215,7 +236,7 @@ begin
 
   TStyleManager.TrySetStyle('Blue Texture');
 
-  Height:= 280;
+  Height:= 300;
 
   if not LoadOptions then begin
 
@@ -340,7 +361,7 @@ begin
                 swActive.State:= TToggleSwitchState.tssOff;
               tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
               tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
-              tkMaxVol.Position:= R.ReadInteger('MaxVol');
+              gMax.MainValue.Value:= R.ReadInteger('MaxVol');
               Result:= True;
             end;
           finally
@@ -371,7 +392,7 @@ begin
         R.WriteInteger('Active', IfThen(IsActive, 1, 0));
         R.WriteString('QuietStart', FormatDateTime('hh:nn AMPM', tpStart.Time));
         R.WriteString('QuietStop', FormatDateTime('hh:nn AMPM', tpStop.Time));
-        R.WriteInteger('MaxVol', tkMaxVol.Position);
+        R.WriteInteger('MaxVol', Round(gMax.MainValue.Value));
         Result:= True;
       end else begin
         MessageDlg('Sorry, unable to save options.', mtError, [mbOK], 0);
@@ -426,14 +447,6 @@ begin
   end;
 end;
 
-procedure TfrmTurnMeDownMain.tkMaxVolChange(Sender: TObject);
-begin
-  lblMaxVol.Caption:= 'Max Volume: '+
-    IntToStr(tkMaxVol.Position) +
-    '% During Quiet Hours';
-  SaveOptions;
-end;
-
 procedure TfrmTurnMeDownMain.FormMouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
 var
@@ -443,13 +456,95 @@ begin
   Pt:= MousePos;
   C:= FindVCLWindow(Pt);
   if C <> nil then begin
-    if C = tkMaxVol then begin
+    if C = gVol then begin
+      //Set current system volume...
       if WheelDelta > 0 then
-        tkMaxVol.Position:= tkMaxVol.Position + 2
+        Vol.Volume:= Vol.Volume + 2
       else
-        tkMaxVol.Position:= tkMaxVol.Position - 2;
+        Vol.Volume:= Vol.Volume - 2;
+      Handled:= True;
+    end else
+    if C = gMax then begin
+      //Set max volume...
+      if WheelDelta > 0 then
+        gMax.MainValue.Value:= gMax.MainValue.Value + 2
+      else
+        gMax.MainValue.Value:= gMax.MainValue.Value - 2;
+      SaveOptions;
       Handled:= True;
     end;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.FormShow(Sender: TObject);
+begin
+
+  gVol.MainValue.Value:= Vol.Volume;
+end;
+
+procedure TfrmTurnMeDownMain.gMaxMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = TMouseButton.mbLeft then begin
+    FChangingMax:= True;
+    var P: TPoint:= Point(X, Y);
+    var D: Integer:= Round((P.X / gMax.ClientWidth) * 100);
+    gMax.MainValue.Value:= D;
+    SaveOptions;
+    AssertVolume;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.gMaxMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  if FChangingMax then begin
+    var P: TPoint:= Point(X, Y);
+    var D: Integer:= Round((P.X / gMax.ClientWidth) * 100);
+    gMax.MainValue.Value:= D;
+    SaveOptions;
+    AssertVolume;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.gMaxMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = TMouseButton.mbLeft then begin
+    FChangingMax:= False;
+    AssertVolume;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.gVolMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = TMouseButton.mbLeft then begin
+    FChangingVol:= True;
+    var P: TPoint:= Point(X, Y);
+    var D: Integer:= Round((P.X / gVol.ClientWidth) * 100);
+    Vol.Volume:= D;
+    AssertVolume;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.gVolMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  if FChangingVol then begin
+    var P: TPoint:= Point(X, Y);
+    var D: Integer:= Round((P.X / gVol.ClientWidth) * 100);
+    Vol.Volume:= D;
+    AssertVolume;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.gVolMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = TMouseButton.mbLeft then begin
+    FChangingVol:= False;
+    AssertVolume;
   end;
 end;
 
@@ -457,11 +552,11 @@ procedure TfrmTurnMeDownMain.AssertVolume;
 begin
   if IsActive and IsInQuietHours then begin
     lblStatus.Visible:= True;
-    Tray.Icons:= Img32;
+    Tray.Icons:= TrayImg;
     Tray.Animate:= True;
-    Tray.Hint:= 'Turn Me Down (Enforcing Quiet Hours)';
-    if Vol.Volume > tkMaxVol.Position then
-      Vol.Volume:= tkMaxVol.Position;
+    Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
+    if Vol.Volume > Round(gMax.MainValue.Value) then
+      Vol.Volume:= Round(gMax.MainValue.Value);
   end else begin
     lblStatus.Visible:= False;
     Tray.Icons:= nil;
@@ -482,6 +577,7 @@ end;
 
 procedure TfrmTurnMeDownMain.TrayPopPopup(Sender: TObject);
 begin
+  //mShowHide.Caption:= IfThen(WindowState = wsNormal, 'Hide', 'Show');
   mEnabled.Checked:= IsActive;
 end;
 
@@ -498,6 +594,7 @@ end;
 
 procedure TfrmTurnMeDownMain.VolVolumeChanged(Sender: TObject; const Volume: Integer);
 begin
+  gVol.MainValue.Value:= Vol.Volume;
   AssertVolume;
 end;
 
