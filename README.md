@@ -47,5 +47,6 @@ Turn Me Down is an open-source application, allowing you to modify it to your ne
   -  TJDVolumeControls
   -  TJDFontGlyphs
   -  TJDGauge
+- [InnoSetup Installer](https://jrsoftware.org/isinfo.php)
 
 
