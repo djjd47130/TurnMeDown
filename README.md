@@ -28,6 +28,7 @@ The following options are available in the main user interface:
 - Quiet Time Start - The time of day to begin quiet time enforcement.
 - Quiet Time Stop - The time of day to stop quiet time enforcement.
 - Max Volume - The maximum volume allowed during quiet time.
+- Current Volume - The current system volume.
 
 # Open-Source
 
@@ -42,9 +43,9 @@ Turn Me Down is an open-source application, allowing you to modify it to your ne
 - [Raize (Konopka) Components](https://raize.com/forums/forum/konopka-signature-vcl-controls-formerly-raize-components/)
   - TRzPanel
   - TRzTrayIcon
-  - TRzTrackBar
 - [JDLib - Custom Controls by Jerry Dodge](https://github.com/djjd47130/JDLib)
   -  TJDVolumeControls
   -  TJDFontGlyphs
+  -  TJDGauge
 
 
