@@ -13,7 +13,11 @@ uses
   JD.Common, JD.VolumeControls, JD.FontGlyphs, JD.Ctrls,
   JD.Ctrls.Gauges,
   RzTrkBar, RzTray, RzPanel,
-  uAbout, System.ImageList, Vcl.ImgList;
+  uAbout, uChart, uChart2,
+  System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit;
+
+const
+  SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
 
 type
   TfrmTurnMeDownMain = class(TForm)
@@ -44,6 +48,7 @@ type
     TrayGlyphs: TJDFontGlyphs;
     gVol: TJDGauge;
     gMax: TJDGauge;
+    mChart: TMenuItem;
     procedure VolVolumeChanged(Sender: TObject; const Volume: Integer);
     procedure TmrTimer(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -79,6 +84,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure gMaxMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure mChartClick(Sender: TObject);
   private
     FMutex: THandle;
     FLoading: Boolean;
@@ -104,9 +110,6 @@ implementation
 uses
   StrUtils,
   Math;
-
-const
-  SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
 
 procedure AddAppToStartup(const AppName, AppPath: string);
 var
@@ -236,7 +239,7 @@ begin
 
   TStyleManager.TrySetStyle('Blue Texture');
 
-  Height:= 300;
+  Height:= 290;
 
   if not LoadOptions then begin
 
@@ -423,6 +426,18 @@ end;
 procedure TfrmTurnMeDownMain.mAboutClick(Sender: TObject);
 begin
   ShowAbout;
+end;
+
+procedure TfrmTurnMeDownMain.mChartClick(Sender: TObject);
+var
+  F: TfrmChart2;
+begin
+  F:= TfrmChart2.Create(nil);
+  try
+    F.ShowModal;
+  finally
+    F.Free;
+  end;
 end;
 
 procedure TfrmTurnMeDownMain.mEnabledClick(Sender: TObject);

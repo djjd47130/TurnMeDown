@@ -1,6 +1,7 @@
 object frmTurnMeDownMain: TfrmTurnMeDownMain
   Left = 0
   Top = 0
+  Cursor = crHandPoint
   Margins.Right = 5
   AlphaBlend = True
   AlphaBlendValue = 220
@@ -46,8 +47,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     TabOrder = 0
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitTop = 241
-    ExplicitWidth = 335
   end
   object pTopControl: TRzPanel
     AlignWithMargins = True
@@ -57,26 +56,25 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Height = 41
     Align = alTop
     BorderOuter = fsNone
+    Color = 15987699
     TabOrder = 1
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 336
     object swActive: TToggleSwitch
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 121
+      Width = 111
       Height = 35
       Cursor = crHandPoint
-      Hint = 'Whether volume rules are enabled'
+      Hint = 'Whether quiet time is enforced'
       Align = alLeft
       ParentShowHint = False
       ShowHint = False
       State = tssOn
       StateCaptions.CaptionOn = 'Enabled'
       StateCaptions.CaptionOff = 'Disabled'
+      SwitchWidth = 40
       TabOrder = 0
       TabStop = False
       OnClick = swActiveClick
@@ -84,9 +82,9 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     end
     object swAutoStart: TToggleSwitch
       AlignWithMargins = True
-      Left = 174
+      Left = 179
       Top = 3
-      Width = 160
+      Width = 155
       Height = 35
       Cursor = crHandPoint
       Hint = 'Whether to start with Windows'
@@ -95,8 +93,9 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       ParentShowHint = False
       ShowHint = False
       State = tssOn
-      StateCaptions.CaptionOn = 'Auto Start On'
-      StateCaptions.CaptionOff = 'Auto Start Off'
+      StateCaptions.CaptionOn = 'Auto Start: On'
+      StateCaptions.CaptionOff = 'Auto Start: Off'
+      SwitchWidth = 40
       TabOrder = 1
       TabStop = False
       OnClick = swAutoStartClick
@@ -107,7 +106,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Left = 0
     Top = 47
     Width = 343
-    Height = 77
+    Height = 66
     Align = alTop
     BorderOuter = fsNone
     Color = 15987699
@@ -115,28 +114,26 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Transparent = True
     OnMouseDown = FormMouseDown
     OnResize = pQuietTimesResize
-    ExplicitTop = 36
-    ExplicitWidth = 824
     object pQuietStart: TRzPanel
       AlignWithMargins = True
       Left = 3
       Top = 3
       Width = 160
-      Height = 71
+      Height = 60
       Align = alLeft
       BorderOuter = fsNone
+      Color = 15987699
       TabOrder = 0
       Transparent = True
       OnMouseDown = FormMouseDown
       object tpStart: TTimePicker
-        AlignWithMargins = True
-        Left = 3
-        Top = 25
-        Width = 154
+        Left = 0
+        Top = 22
+        Width = 160
         Cursor = crHandPoint
-        Hint = 'The time to start enforcing volume rules'
+        Hint = 'The time to start enforcing quiet time'
         Align = alTop
-        BorderStyle = bsNone
+        DropDownCount = 9
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
@@ -148,8 +145,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Time = 0.875000000000000000
         TimeFormat = 'h:mm AMPM'
         OnChange = tpStartChange
-        ExplicitLeft = 6
-        ExplicitTop = 28
       end
       object StaticText1: TStaticText
         Left = 0
@@ -162,9 +157,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Caption = 'Quiet Time Start'
         TabOrder = 1
         OnMouseDown = FormMouseDown
-        ExplicitLeft = 8
-        ExplicitTop = 5
-        ExplicitWidth = 150
       end
     end
     object pQuietStop: TRzPanel
@@ -172,23 +164,21 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       Left = 169
       Top = 3
       Width = 171
-      Height = 71
+      Height = 60
       Align = alClient
       BorderOuter = fsNone
       Color = 15987699
       TabOrder = 1
       Transparent = True
       OnMouseDown = FormMouseDown
-      ExplicitWidth = 160
       object tpStop: TTimePicker
-        AlignWithMargins = True
-        Left = 3
-        Top = 25
-        Width = 165
+        Left = 0
+        Top = 22
+        Width = 171
         Cursor = crHandPoint
-        Hint = 'The time to stop enforcing volume rules'
+        Hint = 'The time to stop enforcing quiet time'
         Align = alTop
-        BorderStyle = bsNone
+        DropDownCount = 9
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
@@ -200,9 +190,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Time = 0.333333333333333300
         TimeFormat = 'h:mm AMPM'
         OnChange = tpStopChange
-        ExplicitLeft = 51
-        ExplicitTop = 39
-        ExplicitWidth = 150
       end
       object StaticText2: TStaticText
         Left = 0
@@ -215,9 +202,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Caption = 'Quiet Time Stop'
         TabOrder = 1
         OnMouseDown = FormMouseDown
-        ExplicitLeft = 51
-        ExplicitTop = 11
-        ExplicitWidth = 150
       end
     end
   end
@@ -239,7 +223,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     TabOrder = 3
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitTop = 377
     object lblStatus: TLabel
       Left = 0
       Top = 0
@@ -265,10 +248,11 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object gVol: TJDGauge
     AlignWithMargins = True
     Left = 5
-    Top = 167
+    Top = 156
     Width = 333
     Height = 34
-    Hint = 'Current System Volume'
+    Cursor = crHandPoint
+    Hint = 'Current system volume'
     Margins.Left = 5
     Margins.Right = 5
     Align = alTop
@@ -286,6 +270,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Crosshairs.VertColor.UseStandardColor = True
     Crosshairs.HorzVisible = False
     Crosshairs.VertVisible = False
+    Crosshairs.VertThickness = 1.000000000000000000
     DoubleBuffered = True
     GaugeType = 'Horizontal Bar'
     Glyph.Font.Charset = DEFAULT_CHARSET
@@ -365,16 +350,15 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnMouseDown = gVolMouseDown
     OnMouseUp = gVolMouseUp
     OnMouseMove = gVolMouseMove
-    ExplicitLeft = 10
-    ExplicitWidth = 323
   end
   object gMax: TJDGauge
     AlignWithMargins = True
     Left = 5
-    Top = 127
+    Top = 116
     Width = 333
     Height = 34
-    Hint = 'Maximum Volume during Quiet Time'
+    Cursor = crHandPoint
+    Hint = 'Maximum volume allowed during quiet time'
     Margins.Left = 5
     Margins.Right = 5
     Align = alTop
@@ -392,6 +376,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Crosshairs.VertColor.UseStandardColor = True
     Crosshairs.HorzVisible = False
     Crosshairs.VertVisible = False
+    Crosshairs.VertThickness = 1.000000000000000000
     DoubleBuffered = True
     GaugeType = 'Horizontal Bar'
     Glyph.Font.Charset = DEFAULT_CHARSET
@@ -471,11 +456,9 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnMouseDown = gMaxMouseDown
     OnMouseUp = gMaxMouseUp
     OnMouseMove = gMaxMouseMove
-    ExplicitLeft = 10
-    ExplicitWidth = 323
   end
   object Vol: TJDVolumeControls
-    Volume = 34
+    Volume = 16
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
@@ -514,6 +497,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     object mAbout: TMenuItem
       Caption = 'About'
       OnClick = mAboutClick
+    end
+    object mChart: TMenuItem
+      Caption = 'Chart'
+      OnClick = mChartClick
     end
     object N1: TMenuItem
       Caption = '-'
