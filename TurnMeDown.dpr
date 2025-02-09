@@ -16,6 +16,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Marble');
   Application.Title := 'Turn Me Down';
   Application.CreateForm(TfrmTurnMeDownMain, frmTurnMeDownMain);
   Application.Run;

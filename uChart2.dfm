@@ -1,13 +1,14 @@
 object frmChart2: TfrmChart2
   Left = 0
   Top = 0
+  Margins.Right = 8
   Caption = 'frmChart2'
-  ClientHeight = 538
-  ClientWidth = 892
-  Color = clBtnFace
+  ClientHeight = 528
+  ClientWidth = 926
+  Color = clBlack
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
+  Font.Color = clWhite
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
@@ -18,8 +19,8 @@ object frmChart2: TfrmChart2
   object JDPlotChart1: TJDPlotChart
     Left = 0
     Top = 0
-    Width = 892
-    Height = 473
+    Width = 926
+    Height = 441
     Align = alTop
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
@@ -27,18 +28,36 @@ object frmChart2: TfrmChart2
     Font.Name = 'Tahoma'
     Font.Style = []
     Font.Quality = fqAntialiased
-    UI.Background.Color.Color = clBlack
+    UI.Background.Color.Color = 6579300
     UI.Background.Color.StandardColor = fcNeutral
     UI.Background.Color.UseStandardColor = False
     UI.Background.Transparent = True
+    UI.ChartArea.AxisLeft.AxisType = atBasic
+    UI.ChartArea.AxisLeft.Labels = lpOutside
+    UI.ChartArea.AxisLeft.Line.Width = 3.000000000000000000
+    UI.ChartArea.AxisLeft.Line.Color.Color = clSilver
+    UI.ChartArea.AxisLeft.Line.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisLeft.Line.Color.UseStandardColor = False
+    UI.ChartArea.AxisLeft.Line.Visible = True
+    UI.ChartArea.AxisBottom.AxisType = atBasic
+    UI.ChartArea.AxisBottom.Labels = lpOutside
+    UI.ChartArea.AxisBottom.Line.Width = 3.000000000000000000
+    UI.ChartArea.AxisBottom.Line.Color.Color = clSilver
+    UI.ChartArea.AxisBottom.Line.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisBottom.Line.Color.UseStandardColor = False
+    UI.ChartArea.AxisBottom.Line.Visible = True
     UI.ChartArea.Border.Width = 1.000000000000000000
     UI.ChartArea.Border.Color.Color = 5460819
     UI.ChartArea.Border.Color.StandardColor = fcNeutral
     UI.ChartArea.Border.Color.UseStandardColor = False
     UI.ChartArea.Border.Visible = True
-    UI.ChartArea.Color.Color = clBlack
-    UI.ChartArea.Color.StandardColor = fcNeutral
-    UI.ChartArea.Color.UseStandardColor = False
+    UI.ChartArea.Color.Color = 47360
+    UI.ChartArea.Color.StandardColor = fcGreen
+    UI.ChartArea.Color.UseStandardColor = True
+    UI.ChartArea.Fill.Color.Color = 12954021
+    UI.ChartArea.Fill.Color.StandardColor = fcNeutral
+    UI.ChartArea.Fill.Color.UseStandardColor = False
+    UI.ChartArea.Fill.Alpha = 100
     UI.ChartArea.Line.Width = 2.000000000000000000
     UI.ChartArea.Line.Color.Color = 47360
     UI.ChartArea.Line.Color.StandardColor = fcGreen
@@ -50,6 +69,52 @@ object frmChart2: TfrmChart2
     UI.ChartArea.Points.Color.StandardColor = fcNeutral
     UI.ChartArea.Points.Color.UseStandardColor = False
     UI.ChartArea.Points.Visible = True
-    UI.ChartArea.Transparent = True
+    UI.ChartArea.Padding = 30.000000000000000000
+  end
+  object RzPanel1: TRzPanel
+    Left = 0
+    Top = 498
+    Width = 926
+    Height = 30
+    Align = alBottom
+    BorderOuter = fsNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    Transparent = True
+    object StaticText1: TStaticText
+      AlignWithMargins = True
+      Left = 8
+      Top = 3
+      Width = 118
+      Height = 24
+      Margins.Left = 8
+      Margins.Right = 8
+      Align = alLeft
+      AutoSize = False
+      Caption = 'X Position'
+      TabOrder = 0
+      ExplicitLeft = 3
+      ExplicitHeight = 28
+    end
+    object StaticText2: TStaticText
+      AlignWithMargins = True
+      Left = 142
+      Top = 3
+      Width = 118
+      Height = 24
+      Margins.Left = 8
+      Margins.Right = 8
+      Align = alLeft
+      AutoSize = False
+      Caption = 'Y Position'
+      TabOrder = 1
+      ExplicitLeft = 203
+      ExplicitHeight = 28
+    end
   end
 end

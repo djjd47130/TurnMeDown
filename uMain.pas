@@ -237,7 +237,8 @@ begin
   ReportMemoryLeaksOnShutdown:= True;
   {$ENDIF}
 
-  TStyleManager.TrySetStyle('Blue Texture');
+  //TStyleManager.TrySetStyle('Blue Texture');
+  TStyleManager.TrySetStyle('Marble');
 
   Height:= 290;
 

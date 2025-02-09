@@ -456,9 +456,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnMouseDown = gMaxMouseDown
     OnMouseUp = gMaxMouseUp
     OnMouseMove = gMaxMouseMove
+    ExplicitLeft = 0
   end
   object Vol: TJDVolumeControls
-    Volume = 16
+    Volume = 30
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
