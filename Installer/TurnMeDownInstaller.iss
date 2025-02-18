@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Turn Me Down"
-#define MyAppVersion "0.4"
+#define MyAppVersion "0.5"
 #define MyAppPublisher "Jerry Dodge"
 #define MyAppURL "https://github.com/djjd47130/TurnMeDown"
 #define MyAppExeName "TurnMeDown.exe"
@@ -47,4 +47,13 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall
+
+[Registry]
+Root: HKCU; Subkey: "Software\JD Software"; Flags: uninsdeletekeyifempty
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "Active"; ValueData: "1"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "MaxVol"; ValueData: "20"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "UseChart"; ValueData: "0"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStart"; ValueData: "09:00 AM"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStop"; ValueData: "09:00 PM"; Flags: createvalueifdoesntexist
 
