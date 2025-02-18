@@ -3,14 +3,15 @@ Windows tool to restrict volume during quiet hours
 
 Live in an apartment? Listen to a lot of music? Neighbors hate you? Worry no more - Turn Me Down restricts your system volume during the quiet hours which you set. 
 
-![image](https://github.com/user-attachments/assets/5a55e30b-9113-40ce-8d58-429e79e3c16c)
+![image](https://github.com/user-attachments/assets/d317557f-06c1-40a0-b79a-de193e49dca1)
+
 
 
 # Usage
 
-The application is fairly simple. Once you install and run Turn Me Down, it will not immediately show you the user interface. Instead, it runs in the background, with a tray icon in your notification area. You can double-click or right-click this icon for further actions.
+The application is fairly simple. Once you install and run Turn Me Down, it will show the main screen. It runs in the background, with a tray icon in your notification area. You can double-click or right-click this icon for further actions. Note that minimizing the window will hide it from the taskbar, and closing it will prompt you to terminate the application.
 
-## Popup Menu
+## Tray Popup Menu
 
 When you right-click the icon in your notification area, you will see a popup menu with the following options:
 
@@ -24,11 +25,15 @@ When you right-click the icon in your notification area, you will see a popup me
 The following options are available in the main user interface:
 
 - Enabled - A switch to toggle enforcement on or off.
+- Chart - Whether to use basic time range or plotted chart for volume control.
 - Auto Start - Whether to start the application with Windows.
-- Quiet Time Start - The time of day to begin quiet time enforcement.
-- Quiet Time Stop - The time of day to stop quiet time enforcement.
-- Max Volume - The maximum volume allowed during quiet time.
-- Current Volume - The current system volume.
+- Current Volume - The current system volume. Click or use mouse wheel to change.
+- When chart is disabled...
+  - Quiet Time Start - The time of day to begin quiet time enforcement.
+  - Quiet Time Stop - The time of day to stop quiet time enforcement.
+  - Max Volume - The maximum volume allowed during quiet time.
+- When chart is enabled:
+  - Plot Chart - Click and drag points around to desired locations.
 
 # Open-Source
 
@@ -47,6 +52,7 @@ Turn Me Down is an open-source application, allowing you to modify it to your ne
   -  TJDVolumeControls
   -  TJDFontGlyphs
   -  TJDGauge
+  -  TJDPlotChart
 - [InnoSetup Installer](https://jrsoftware.org/isinfo.php)
 
 
