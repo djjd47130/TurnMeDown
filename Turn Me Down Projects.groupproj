@@ -3,13 +3,13 @@
         <ProjectGuid>{FFABC3C2-7201-40F4-8F10-2BDB35CAD3F3}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="TurnMeDown.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\JDLib-master\JDLibComponents.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="..\JDLib-master\DclJDLibComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TurnMeDown.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -20,15 +20,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="TurnMeDown">
-        <MSBuild Projects="TurnMeDown.dproj"/>
-    </Target>
-    <Target Name="TurnMeDown:Clean">
-        <MSBuild Projects="TurnMeDown.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="TurnMeDown:Make">
-        <MSBuild Projects="TurnMeDown.dproj" Targets="Make"/>
-    </Target>
     <Target Name="JDLibComponents">
         <MSBuild Projects="..\JDLib-master\JDLibComponents.dproj"/>
     </Target>
@@ -47,14 +38,23 @@
     <Target Name="DclJDLibComponents:Make">
         <MSBuild Projects="..\JDLib-master\DclJDLibComponents.dproj" Targets="Make"/>
     </Target>
+    <Target Name="TurnMeDown">
+        <MSBuild Projects="TurnMeDown.dproj"/>
+    </Target>
+    <Target Name="TurnMeDown:Clean">
+        <MSBuild Projects="TurnMeDown.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TurnMeDown:Make">
+        <MSBuild Projects="TurnMeDown.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TurnMeDown;JDLibComponents;DclJDLibComponents"/>
+        <CallTarget Targets="JDLibComponents;DclJDLibComponents;TurnMeDown"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TurnMeDown:Clean;JDLibComponents:Clean;DclJDLibComponents:Clean"/>
+        <CallTarget Targets="JDLibComponents:Clean;DclJDLibComponents:Clean;TurnMeDown:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TurnMeDown:Make;JDLibComponents:Make;DclJDLibComponents:Make"/>
+        <CallTarget Targets="JDLibComponents:Make;DclJDLibComponents:Make;TurnMeDown:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

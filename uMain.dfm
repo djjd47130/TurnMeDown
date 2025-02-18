@@ -4,12 +4,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   Cursor = crHandPoint
   Margins.Right = 5
   AlphaBlend = True
-  AlphaBlendValue = 220
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  AlphaBlendValue = 235
   Caption = 'Turn Me Down'
-  ClientHeight = 393
-  ClientWidth = 343
+  ClientHeight = 494
+  ClientWidth = 536
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -31,8 +29,8 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   TextHeight = 18
   object pHint: TRzPanel
     Left = 0
-    Top = 370
-    Width = 343
+    Top = 471
+    Width = 536
     Height = 23
     Align = alBottom
     BorderOuter = fsNone
@@ -52,8 +50,8 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 337
-    Height = 41
+    Width = 530
+    Height = 45
     Align = alTop
     BorderOuter = fsNone
     Color = 15987699
@@ -65,7 +63,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       Left = 3
       Top = 3
       Width = 111
-      Height = 35
+      Height = 39
       Cursor = crHandPoint
       Hint = 'Whether quiet time is enforced'
       Align = alLeft
@@ -77,15 +75,14 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       SwitchWidth = 40
       TabOrder = 0
       TabStop = False
-      OnClick = swActiveClick
       ExplicitHeight = 20
     end
     object swAutoStart: TToggleSwitch
       AlignWithMargins = True
-      Left = 179
+      Left = 372
       Top = 3
       Width = 155
-      Height = 35
+      Height = 39
       Cursor = crHandPoint
       Hint = 'Whether to start with Windows'
       Align = alRight
@@ -101,17 +98,39 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       OnClick = swAutoStartClick
       ExplicitHeight = 20
     end
+    object swUseChart: TToggleSwitch
+      AlignWithMargins = True
+      Left = 120
+      Top = 3
+      Width = 120
+      Height = 39
+      Cursor = crHandPoint
+      Hint = 'Whether to define quiet time directly or using a chart'
+      Align = alLeft
+      ParentShowHint = False
+      ShowHint = False
+      State = tssOn
+      StateCaptions.CaptionOn = 'Chart: On'
+      StateCaptions.CaptionOff = 'Chart: Off'
+      SwitchWidth = 40
+      TabOrder = 2
+      TabStop = False
+      OnClick = swUseChartClick
+      ExplicitHeight = 20
+    end
   end
   object pQuietTimes: TRzPanel
     Left = 0
-    Top = 47
-    Width = 343
-    Height = 66
+    Top = 51
+    Width = 536
+    Height = 70
+    Margins.Top = 5
     Align = alTop
     BorderOuter = fsNone
     Color = 15987699
     TabOrder = 2
     Transparent = True
+    Visible = False
     OnMouseDown = FormMouseDown
     OnResize = pQuietTimesResize
     object pQuietStart: TRzPanel
@@ -119,7 +138,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       Left = 3
       Top = 3
       Width = 160
-      Height = 60
+      Height = 64
       Align = alLeft
       BorderOuter = fsNone
       Color = 15987699
@@ -163,8 +182,8 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       AlignWithMargins = True
       Left = 169
       Top = 3
-      Width = 171
-      Height = 60
+      Width = 364
+      Height = 64
       Align = alClient
       BorderOuter = fsNone
       Color = 15987699
@@ -174,7 +193,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object tpStop: TTimePicker
         Left = 0
         Top = 22
-        Width = 171
+        Width = 364
         Cursor = crHandPoint
         Hint = 'The time to stop enforcing quiet time'
         Align = alTop
@@ -194,7 +213,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object StaticText2: TStaticText
         Left = 0
         Top = 0
-        Width = 171
+        Width = 364
         Height = 22
         Align = alTop
         Alignment = taCenter
@@ -207,8 +226,8 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   end
   object pStatus: TRzPanel
     Left = 0
-    Top = 340
-    Width = 343
+    Top = 441
+    Width = 536
     Height = 30
     Align = alBottom
     BorderOuter = fsNone
@@ -226,7 +245,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     object lblStatus: TLabel
       Left = 0
       Top = 0
-      Width = 343
+      Width = 536
       Height = 30
       Align = alTop
       Alignment = taCenter
@@ -243,13 +262,14 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       StyleElements = [seClient, seBorder]
       OnMouseDown = FormMouseDown
       ExplicitTop = -6
+      ExplicitWidth = 343
     end
   end
   object gVol: TJDGauge
     AlignWithMargins = True
     Left = 5
-    Top = 156
-    Width = 333
+    Top = 164
+    Width = 526
     Height = 34
     Cursor = crHandPoint
     Hint = 'Current system volume'
@@ -259,13 +279,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     BaseAutoSize = False
     BaseSize = 60.000000000000000000
     CaptionMargin = 10.000000000000000000
-    ColorMain.Color = clSilver
-    ColorMain.StandardColor = fcGray
-    ColorMain.UseStandardColor = True
-    Crosshairs.HorzColor.Color = 13747896
+    ColorMain.Color = clGray
+    ColorMain.UseStandardColor = False
     Crosshairs.HorzColor.StandardColor = fcNeutral
     Crosshairs.HorzColor.UseStandardColor = True
-    Crosshairs.VertColor.Color = 13747896
     Crosshairs.VertColor.StandardColor = fcNeutral
     Crosshairs.VertColor.UseStandardColor = True
     Crosshairs.HorzVisible = False
@@ -300,28 +317,25 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Values = <
       item
         Caption = 'Current Volume'
-        CapStart = lcFlat
-        CapStop = lcFlat
+        CapStart = lcTriangle
+        CapStop = lcTriangle
         Glyph.Font.Charset = DEFAULT_CHARSET
         Glyph.Font.Color = clWindowText
         Glyph.Font.Height = -21
         Glyph.Font.Name = 'FontAwesome'
         Glyph.Font.Style = []
         Glyph.Font.Quality = fqAntialiased
-        Glyph.StandardColor = fcNeutral
+        Glyph.StandardColor = fcRed
         Glyph.UseStandardColor = True
-        Peak.Color.Color = 8421631
-        Peak.Color.StandardColor = fcNeutral
+        Peak.Color.Color = 9934847
         Peak.Color.UseStandardColor = False
         Peak.Enabled = True
         Peak.Decay = 2.200000000000000000
         Max = 100.000000000000000000
         Value = 25.000000000000000000
-        Color.Color = 47360
-        Color.StandardColor = fcGreen
+        Color.StandardColor = fcRed
         Color.UseStandardColor = True
         OffsetThickness = 8.000000000000000000
-        TicksMajor.Color.Color = 13747896
         TicksMajor.Color.StandardColor = fcNeutral
         TicksMajor.Color.UseStandardColor = True
         TicksMajor.Interval = 10.000000000000000000
@@ -333,7 +347,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         TicksMajor.Length = 5.000000000000000000
         TicksMajor.Position = tpOutside
         TicksMajor.Thickness = 1.000000000000000000
-        TicksMinor.Color.Color = 13747896
         TicksMinor.Color.StandardColor = fcNeutral
         TicksMinor.Color.UseStandardColor = True
         TicksMinor.Interval = 10.000000000000000000
@@ -354,8 +367,8 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object gMax: TJDGauge
     AlignWithMargins = True
     Left = 5
-    Top = 116
-    Width = 333
+    Top = 124
+    Width = 526
     Height = 34
     Cursor = crHandPoint
     Hint = 'Maximum volume allowed during quiet time'
@@ -365,13 +378,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     BaseAutoSize = False
     BaseSize = 60.000000000000000000
     CaptionMargin = 10.000000000000000000
-    ColorMain.Color = clSilver
-    ColorMain.StandardColor = fcGray
-    ColorMain.UseStandardColor = True
-    Crosshairs.HorzColor.Color = 13747896
+    ColorMain.Color = clGray
+    ColorMain.UseStandardColor = False
     Crosshairs.HorzColor.StandardColor = fcNeutral
     Crosshairs.HorzColor.UseStandardColor = True
-    Crosshairs.VertColor.Color = 13747896
     Crosshairs.VertColor.StandardColor = fcNeutral
     Crosshairs.VertColor.UseStandardColor = True
     Crosshairs.HorzVisible = False
@@ -406,28 +416,25 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Values = <
       item
         Caption = 'Max Volume'
-        CapStart = lcFlat
-        CapStop = lcFlat
+        CapStart = lcTriangle
+        CapStop = lcTriangle
         Glyph.Font.Charset = DEFAULT_CHARSET
         Glyph.Font.Color = clWindowText
         Glyph.Font.Height = -21
         Glyph.Font.Name = 'FontAwesome'
         Glyph.Font.Style = []
         Glyph.Font.Quality = fqAntialiased
-        Glyph.StandardColor = fcNeutral
+        Glyph.StandardColor = fcRed
         Glyph.UseStandardColor = True
-        Peak.Color.Color = 8421631
-        Peak.Color.StandardColor = fcNeutral
+        Peak.Color.Color = 9934847
         Peak.Color.UseStandardColor = False
         Peak.Enabled = True
         Peak.Decay = 2.200000000000000000
         Max = 100.000000000000000000
         Value = 14.000000000000000000
-        Color.Color = 47360
-        Color.StandardColor = fcGreen
+        Color.StandardColor = fcRed
         Color.UseStandardColor = True
         OffsetThickness = 8.000000000000000000
-        TicksMajor.Color.Color = 13747896
         TicksMajor.Color.StandardColor = fcNeutral
         TicksMajor.Color.UseStandardColor = True
         TicksMajor.Interval = 10.000000000000000000
@@ -439,7 +446,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         TicksMajor.Length = 5.000000000000000000
         TicksMajor.Position = tpOutside
         TicksMajor.Thickness = 1.000000000000000000
-        TicksMinor.Color.Color = 13747896
         TicksMinor.Color.StandardColor = fcNeutral
         TicksMinor.Color.UseStandardColor = True
         TicksMinor.Interval = 10.000000000000000000
@@ -453,39 +459,150 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       end>
     ValueFormat = '#,###,##0%'
     ValueMargin = 10.000000000000000000
+    Visible = False
     OnMouseDown = gMaxMouseDown
     OnMouseUp = gMaxMouseUp
     OnMouseMove = gMaxMouseMove
-    ExplicitLeft = 0
+  end
+  object VolChart: TJDPlotChart
+    Left = 0
+    Top = 201
+    Width = 536
+    Height = 152
+    Hint = 'Click and drag points to control volume'
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -9
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Font.Quality = fqAntialiased
+    Points = <
+      item
+        Y = 20.000000000000000000
+      end
+      item
+        X = 8.000000000000000000
+        Y = 20.000000000000000000
+      end
+      item
+        X = 9.000000000000000000
+        Y = 100.000000000000000000
+      end
+      item
+        X = 20.000000000000000000
+        Y = 100.000000000000000000
+      end
+      item
+        X = 21.000000000000000000
+        Y = 40.000000000000000000
+      end
+      item
+        X = 24.000000000000000000
+        Y = 20.000000000000000000
+      end>
+    UI.Background.Color.Color = clBlack
+    UI.Background.Color.UseStandardColor = False
+    UI.Background.Alpha = 255
+    UI.Background.Transparent = True
+    UI.ChartArea.AxisLeft.Labels = lpOutside
+    UI.ChartArea.AxisLeft.BaseLine.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisLeft.BaseLine.Color.UseStandardColor = True
+    UI.ChartArea.AxisLeft.BaseLine.Alpha = 150
+    UI.ChartArea.AxisLeft.BaseLine.Width = 2.000000000000000000
+    UI.ChartArea.AxisLeft.BaseLine.Visible = True
+    UI.ChartArea.AxisLeft.GridLines.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisLeft.GridLines.Color.UseStandardColor = True
+    UI.ChartArea.AxisLeft.GridLines.Alpha = 64
+    UI.ChartArea.AxisLeft.GridLines.Width = 1.000000000000000000
+    UI.ChartArea.AxisLeft.GridLines.Visible = True
+    UI.ChartArea.AxisBottom.Labels = lpOutside
+    UI.ChartArea.AxisBottom.BaseLine.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisBottom.BaseLine.Color.UseStandardColor = True
+    UI.ChartArea.AxisBottom.BaseLine.Alpha = 150
+    UI.ChartArea.AxisBottom.BaseLine.Width = 2.000000000000000000
+    UI.ChartArea.AxisBottom.BaseLine.Visible = True
+    UI.ChartArea.AxisBottom.GridLines.Color.StandardColor = fcNeutral
+    UI.ChartArea.AxisBottom.GridLines.Color.UseStandardColor = True
+    UI.ChartArea.AxisBottom.GridLines.Alpha = 64
+    UI.ChartArea.AxisBottom.GridLines.Width = 1.000000000000000000
+    UI.ChartArea.AxisBottom.GridLines.Visible = True
+    UI.ChartArea.Border.Color.Color = 5460819
+    UI.ChartArea.Border.Color.UseStandardColor = False
+    UI.ChartArea.Border.Alpha = 255
+    UI.ChartArea.Border.Width = 1.000000000000000000
+    UI.ChartArea.Border.Visible = True
+    UI.ChartArea.Color.Color = clBlack
+    UI.ChartArea.Color.UseStandardColor = False
+    UI.ChartArea.Fill.Color.Color = clMaroon
+    UI.ChartArea.Fill.Color.UseStandardColor = False
+    UI.ChartArea.Fill.Alpha = 40
+    UI.ChartArea.Line.Color.Color = clRed
+    UI.ChartArea.Line.Color.UseStandardColor = False
+    UI.ChartArea.Line.Alpha = 255
+    UI.ChartArea.Line.Width = 2.000000000000000000
+    UI.ChartArea.Line.Visible = True
+    UI.ChartArea.Points.Alpha = 255
+    UI.ChartArea.Points.PointType = ptEllipse
+    UI.ChartArea.Points.Width = 10.000000000000000000
+    UI.ChartArea.Points.Color.Color = clMaroon
+    UI.ChartArea.Points.Color.UseStandardColor = False
+    UI.ChartArea.Points.Visible = True
+    UI.ChartArea.PointMouse.Alpha = 255
+    UI.ChartArea.PointMouse.PointType = ptEllipse
+    UI.ChartArea.PointMouse.Width = 12.000000000000000000
+    UI.ChartArea.PointMouse.Color.StandardColor = fcRed
+    UI.ChartArea.PointMouse.Color.UseStandardColor = True
+    UI.ChartArea.PointMouse.Visible = True
+    UI.ChartArea.PointHover.Alpha = 255
+    UI.ChartArea.PointHover.PointType = ptEllipse
+    UI.ChartArea.PointHover.Width = 12.000000000000000000
+    UI.ChartArea.PointHover.Color.StandardColor = fcRed
+    UI.ChartArea.PointHover.Color.UseStandardColor = True
+    UI.ChartArea.PointHover.Visible = True
+    UI.ChartArea.Padding = 15.000000000000000000
+    UX.ChartArea.AxisBottom.AxisType = atCustom
+    UX.ChartArea.AxisBottom.Max = 24.000000000000000000
+    UX.ChartArea.AxisBottom.Frequency = 2.000000000000000000
+    UX.ChartArea.AxisLeft.AxisType = atPercent
+    UX.ChartArea.AxisLeft.Max = 100.000000000000000000
+    UX.ChartArea.AxisLeft.Frequency = 20.000000000000000000
+    UX.ChartArea.AxisLeft.Format = '0%'
+    UX.ChartArea.Overlap = drRestrict
+    UX.ChartArea.LinkLeftAndRight = True
+    UX.ChartArea.SnapTolerance = 8.000000000000000000
+    UX.ChartArea.AddPointAnywhere = False
+    OnPointAdded = VolChartPointAdded
+    OnPointMoved = VolChartPointMoved
+    OnPointDeleted = VolChartPointDeleted
   end
   object Vol: TJDVolumeControls
-    Volume = 30
+    Volume = 27
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
-    Top = 240
+    Top = 352
   end
   object Tmr: TTimer
     Interval = 250
     OnTimer = TmrTimer
     Left = 56
-    Top = 240
+    Top = 352
   end
   object Tray: TRzTrayIcon
     Animate = True
-    HideOnStartup = True
     Hint = 'Turn Me Down'
     PopupMenu = TrayPop
     Icons = TrayImg
     Interval = 500
     OnQueryEndSession = TrayQueryEndSession
     Left = 16
-    Top = 288
+    Top = 400
   end
   object TrayPop: TPopupMenu
     OnPopup = TrayPopPopup
     Left = 64
-    Top = 288
+    Top = 400
     object mShowHide: TMenuItem
       Caption = 'Show'
       OnClick = mShowHideClick
@@ -499,10 +616,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       Caption = 'About'
       OnClick = mAboutClick
     end
-    object mChart: TMenuItem
-      Caption = 'Chart'
-      OnClick = mChartClick
-    end
     object N1: TMenuItem
       Caption = '-'
     end
@@ -514,13 +627,13 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object AppEvents: TApplicationEvents
     OnHint = AppEventsHint
     Left = 104
-    Top = 240
+    Top = 352
   end
   object TrayImg: TImageList
     Height = 32
     Width = 32
     Left = 176
-    Top = 288
+    Top = 400
     Bitmap = {
       494C010102000800040020002000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000002000000001002000000000000040
@@ -1085,6 +1198,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Ref.UseStandardColor = False
       end>
     Left = 120
-    Top = 288
+    Top = 400
   end
 end

@@ -13,8 +13,8 @@ uses
   JD.Common, JD.VolumeControls, JD.FontGlyphs, JD.Ctrls,
   JD.Ctrls.Gauges,
   RzTrkBar, RzTray, RzPanel,
-  uAbout, uChart, uChart2,
-  System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit;
+  uAbout, uChart2,
+  System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart;
 
 const
   SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
@@ -48,7 +48,8 @@ type
     TrayGlyphs: TJDFontGlyphs;
     gVol: TJDGauge;
     gMax: TJDGauge;
-    mChart: TMenuItem;
+    VolChart: TJDPlotChart;
+    swUseChart: TToggleSwitch;
     procedure VolVolumeChanged(Sender: TObject; const Volume: Integer);
     procedure TmrTimer(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -56,7 +57,6 @@ type
     procedure tpStopChange(Sender: TObject);
     procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure swActiveClick(Sender: TObject);
     procedure mExitClick(Sender: TObject);
     procedure mShowHideClick(Sender: TObject);
     procedure mEnabledClick(Sender: TObject);
@@ -83,8 +83,11 @@ type
     procedure gMaxMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure gMaxMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure swUseChartClick(Sender: TObject);
+    procedure VolChartPointMoved(Sender: TObject; P: TJDPlotPoint);
+    procedure VolChartPointAdded(Sender: TObject; P: TJDPlotPoint);
+    procedure VolChartPointDeleted(Sender: TObject; P: TJDPlotPoint);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure mChartClick(Sender: TObject);
   private
     FMutex: THandle;
     FLoading: Boolean;
@@ -93,6 +96,8 @@ type
     procedure AssertVolume;
     procedure BringExistingInstanceToFront;
     procedure ShowAbout;
+    procedure DisplayChart(const AVisible: Boolean);
+    function IsChart: Boolean;
   public
     function LoadOptions: Boolean;
     function SaveOptions: Boolean;
@@ -197,6 +202,8 @@ begin
   end;
 end;
 
+{ TfrmTurnMeDownMain }
+
 procedure TfrmTurnMeDownMain.AppEventsHint(Sender: TObject);
 begin
   pHint.Caption:= Application.Hint;
@@ -205,7 +212,9 @@ end;
 procedure TfrmTurnMeDownMain.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-  //
+  VolChart.OnPointAdded:= nil;
+  VolChart.OnPointMoved:= nil;
+  VolChart.OnPointDeleted:= nil;
 end;
 
 procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -223,6 +232,24 @@ begin
   //Tray.MinimizeApp;
 end;
 
+function GetMainBackgroundColor: TColor;
+var
+  Style: TCustomStyleServices;
+  Details: TThemedElementDetails;
+  Color: TColor;
+begin
+  Style := TStyleManager.ActiveStyle;
+  if Assigned(Style) then begin
+    Details := Style.GetElementDetails(twWindowRoot);
+    if Style.GetElementColor(Details, ecFillColor, Color) then begin
+      Result := Color;
+      Exit;
+    end;
+  end;
+  // Fallback to a default color if style or color not found
+  Result := clBtnFace;
+end;
+
 procedure TfrmTurnMeDownMain.FormCreate(Sender: TObject);
 begin
 
@@ -238,9 +265,16 @@ begin
   {$ENDIF}
 
   //TStyleManager.TrySetStyle('Blue Texture');
-  TStyleManager.TrySetStyle('Marble');
+  //TStyleManager.TrySetStyle('Marble');
+  //TStyleManager.TrySetStyle('Cobalt XEMedia');
+  //TStyleManager.TrySetStyle('Sound Insulation');
+  TStyleManager.TrySetStyle('Ruby Graphite');
+  //TStyleManager.TrySetStyle('Onyx Blue');
 
-  Height:= 290;
+  VolChart.Align:= alClient;
+  Height:= 330;
+
+  //VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
 
   if not LoadOptions then begin
 
@@ -294,6 +328,11 @@ begin
   Result:= swActive.State = TToggleSwitchState.tssOn;
 end;
 
+function TfrmTurnMeDownMain.IsChart: Boolean;
+begin
+  Result:= swUseChart.State = tssOn;
+end;
+
 function TfrmTurnMeDownMain.IsInQuietHours: Boolean;
 var
   T, T1, T2: TTime;
@@ -322,6 +361,7 @@ end;
 function TfrmTurnMeDownMain.LoadOptions: Boolean;
 var
   R: TRegistry;
+  S: String;
 begin
   Result:= False;
   if FLoading then Exit;
@@ -349,6 +389,8 @@ begin
             R.WriteString('QuietStart', '9:00 PM');
             R.WriteString('QuietStop', '9:00 AM');
             R.WriteInteger('MaxVol', 15);
+            R.WriteInteger('UseChart', 0);
+            //TODO: Chart data... Actually let's leave it empty by default...
           end;
         end;
       end;
@@ -366,6 +408,23 @@ begin
               tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
               tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
               gMax.MainValue.Value:= R.ReadInteger('MaxVol');
+              if R.ValueExists('UseChart') then begin
+                if R.ReadInteger('UseChart') = 1 then
+                  swUseChart.State:= tssOn
+                else
+                  swUseChart.State:= tssOff;
+              end else begin
+                swUseChart.State:= tssOff;
+              end;
+              if R.ValueExists('ChartData') then begin
+                //TODO: Load chart data from registry...
+                S:= R.ReadString('ChartData');
+                VolChart.Points.LoadFromString(S);
+              end else begin
+                //Create chart data from time range and max volume...
+                VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
+              end;
+              DisplayChart(IsChart);
               Result:= True;
             end;
           finally
@@ -385,6 +444,7 @@ function TfrmTurnMeDownMain.SaveOptions: Boolean;
 var
   R: TRegistry;
 begin
+
   Result:= False;
   if FLoading then Exit;
   R:= TRegistry.Create(KEY_READ or KEY_WRITE);
@@ -397,6 +457,9 @@ begin
         R.WriteString('QuietStart', FormatDateTime('hh:nn AMPM', tpStart.Time));
         R.WriteString('QuietStop', FormatDateTime('hh:nn AMPM', tpStop.Time));
         R.WriteInteger('MaxVol', Round(gMax.MainValue.Value));
+        R.WriteInteger('UseChart', IfThen(IsChart, 1, 0));
+        //TODO: Chart data...
+        R.WriteString('ChartData', VolChart.Points.SaveToString);
         Result:= True;
       end else begin
         MessageDlg('Sorry, unable to save options.', mtError, [mbOK], 0);
@@ -429,29 +492,12 @@ begin
   ShowAbout;
 end;
 
-procedure TfrmTurnMeDownMain.mChartClick(Sender: TObject);
-var
-  F: TfrmChart2;
-begin
-  F:= TfrmChart2.Create(nil);
-  try
-    F.ShowModal;
-  finally
-    F.Free;
-  end;
-end;
-
 procedure TfrmTurnMeDownMain.mEnabledClick(Sender: TObject);
 begin
   if IsActive then
     swActive.State:= TToggleSwitchState.tssOff
   else
     swActive.State:= TToggleSwitchState.tssOn;
-  SaveOptions;
-end;
-
-procedure TfrmTurnMeDownMain.swActiveClick(Sender: TObject);
-begin
   SaveOptions;
 end;
 
@@ -565,14 +611,29 @@ begin
 end;
 
 procedure TfrmTurnMeDownMain.AssertVolume;
+var
+  MaxVol: Integer;
 begin
-  if IsActive and IsInQuietHours then begin
-    lblStatus.Visible:= True;
-    Tray.Icons:= TrayImg;
-    Tray.Animate:= True;
-    Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
-    if Vol.Volume > Round(gMax.MainValue.Value) then
-      Vol.Volume:= Round(gMax.MainValue.Value);
+
+  if IsActive then begin
+    if IsChart then begin
+      lblStatus.Visible:= True;
+      Tray.Icons:= TrayImg;
+      Tray.Animate:= True;
+      Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
+      MaxVol:= Round(VolChart.GetTimePerc(Now));
+    end else
+    if IsInQuietHours then begin
+      lblStatus.Visible:= True;
+      Tray.Icons:= TrayImg;
+      Tray.Animate:= True;
+      Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
+      MaxVol:= Round(gMax.MainValue.Value);
+    end else begin
+      MaxVol:= 100;
+    end;
+    if Vol.Volume > MaxVol then
+      Vol.Volume:= MaxVol;
   end else begin
     lblStatus.Visible:= False;
     Tray.Icons:= nil;
@@ -606,6 +667,55 @@ end;
 procedure TfrmTurnMeDownMain.TmrTimer(Sender: TObject);
 begin
   AssertVolume;
+end;
+
+procedure TfrmTurnMeDownMain.swUseChartClick(Sender: TObject);
+begin
+  case swUseChart.State of
+    tssOn: begin
+      //Use chart...
+      DisplayChart(True);
+    end;
+    else begin
+      //Use time range...
+      DisplayChart(False);
+    end;
+  end;
+  SaveOptions;
+end;
+
+procedure TfrmTurnMeDownMain.DisplayChart(const AVisible: Boolean);
+begin
+  VolChart.Visible:= AVisible;
+  gMax.Visible:= not AVisible;
+  pQuietTimes.Visible:= not AVisible;
+  lblStatus.Visible:= not AVisible;
+
+  if AVisible then begin
+    //Show chart...
+    Height:= 420;
+  end else begin
+    //Show time range and max vol...
+    Height:= 300;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartPointAdded(Sender: TObject;
+  P: TJDPlotPoint);
+begin
+  SaveOptions;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartPointDeleted(Sender: TObject;
+  P: TJDPlotPoint);
+begin
+  SaveOptions;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartPointMoved(Sender: TObject;
+  P: TJDPlotPoint);
+begin
+  SaveOptions;
 end;
 
 procedure TfrmTurnMeDownMain.VolVolumeChanged(Sender: TObject; const Volume: Integer);

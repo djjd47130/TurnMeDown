@@ -652,8 +652,7 @@ begin
   try
     Reg.RootKey := HKEY_CURRENT_USER;
 
-    if Reg.OpenKey(SETTINGS_KEY, True) then
-    begin
+    if Reg.OpenKey(SETTINGS_KEY, True) then begin
       // Serialize the array of TPlotPoint to a memory stream
       Buffer.WriteData(FPoints, Length(FPoints) * SizeOf(TPlotPoint));
       Buffer.Position := 0;
@@ -681,12 +680,10 @@ begin
   try
     Reg.RootKey := HKEY_CURRENT_USER;
 
-    if Reg.OpenKey(SETTINGS_KEY, False) then
-    begin
+    if Reg.OpenKey(SETTINGS_KEY, False) then begin
       // Get the size of the binary data
       DataSize := Reg.GetDataSize('PlotPoints');
-      if DataSize > 0 then
-      begin
+      if DataSize > 0 then begin
         // Read the binary data from the registry
         Buffer.SetSize(DataSize);
         Reg.ReadBinaryData('PlotPoints', Buffer.Memory^, DataSize);
