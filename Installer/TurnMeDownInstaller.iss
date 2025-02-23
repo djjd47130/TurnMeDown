@@ -55,5 +55,6 @@ Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueNa
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "MaxVol"; ValueData: "20"; Flags: createvalueifdoesntexist
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "UseChart"; ValueData: "0"; Flags: createvalueifdoesntexist
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStart"; ValueData: "09:00 AM"; Flags: createvalueifdoesntexist
-Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStop"; ValueData: "09:00 PM"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStop"; ValueData: "09:00 PM"; Flags: createvalueifdoesntexist       
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "ChartData"; Flags: dontcreatekey uninsdeletevalue
 

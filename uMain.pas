@@ -290,9 +290,7 @@ begin
 
   //VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
 
-  if not LoadOptions then begin
-
-  end;
+  LoadOptions;
 end;
 
 procedure TfrmTurnMeDownMain.FormDestroy(Sender: TObject);
@@ -378,23 +376,27 @@ var
 begin
   Exists:= R.KeyExists(SETTINGS_KEY);
   if R.OpenKey(SETTINGS_KEY, True) then begin
-    if not R.ValueExists('Active') then
-      R.WriteBool('Active', True);
-    if not R.ValueExists('MaxVol') then
-      R.WriteInteger('MaxVol', 25);
-    if not R.ValueExists('QuietStart') then
-      R.WriteString('QuietStart', '09:00 PM');
-    if not R.ValueExists('QuietStop') then
-      R.WriteString('QuietStop', '09:00 AM');
-    if not R.ValueExists('UseChart') then
-      R.WriteBool('UseChart', False);
-    //Ignore chart data.
-    //TODO: Startup...
-
+    try
+      if not R.ValueExists('Active') then
+        R.WriteInteger('Active', 1);
+      if not R.ValueExists('MaxVol') then
+        R.WriteInteger('MaxVol', 25);
+      if not R.ValueExists('QuietStart') then
+        R.WriteString('QuietStart', '09:00 PM');
+      if not R.ValueExists('QuietStop') then
+        R.WriteString('QuietStop', '09:00 AM');
+      if not R.ValueExists('UseChart') then
+        R.WriteInteger('UseChart', 0);
+      //Ignore chart data.
+      //TODO: Startup...
+    finally
+      R.CloseKey;
+    end;
   end;
-  if not Exists then
+  if not Exists then begin
     if not IsAppInStartup('TurnMeDown') then
       AddAppToStartup('TurnMeDown', Application.ExeName);
+  end;
 end;
 
 function TfrmTurnMeDownMain.LoadOptions: Boolean;
@@ -417,65 +419,36 @@ begin
       R.RootKey:= HKEY_CURRENT_USER;
 
       EnsureRegDefaults(R);
-      Result:= R.KeyExists(SETTINGS_KEY);
-
-      {
-      if not Result then begin
-        Result:= R.CreateKey(SETTINGS_KEY);
-        if Result then begin
-          //Initialize defaults...
-          if not IsAppInStartup('TurnMeDown') then
-            AddAppToStartup('TurnMeDown', Application.ExeName);
-          Result:= R.OpenKey(SETTINGS_KEY, True);
-          if Result then begin
-            R.WriteInteger('Active', 1);
-            R.WriteString('QuietStart', '9:00 PM');
-            R.WriteString('QuietStop', '9:00 AM');
-            R.WriteInteger('MaxVol', 15);
-            R.WriteInteger('UseChart', 0);
-            //TODO: Chart data... Actually let's leave it empty by default...
-          end;
-        end;
-      end;
-      }
+      Result:= True; // R.KeyExists(SETTINGS_KEY);
 
       if Result then begin
-        Result:= R.KeyExists(SETTINGS_KEY);
-        if Result then begin
-          Result:= R.OpenKey(SETTINGS_KEY, True);
-          try
-            if Result then begin
-              //Load actual options
-              if R.ReadInteger('Active') = 1 then
-                swActive.State:= TToggleSwitchState.tssOn
-              else
-                swActive.State:= TToggleSwitchState.tssOff;
-              tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
-              tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
-              gMax.MainValue.Value:= R.ReadInteger('MaxVol');
-              if R.ValueExists('UseChart') then begin
-                if R.ReadInteger('UseChart') = 1 then
-                  swUseChart.State:= tssOn
-                else
-                  swUseChart.State:= tssOff;
-              end else begin
-                swUseChart.State:= tssOff;
-              end;
-              if R.ValueExists('ChartData') then begin
-                //TODO: Load chart data from registry...
-                S:= R.ReadString('ChartData');
-                VolChart.Points.LoadFromString(S);
-              end else begin
-                //Create chart data from time range and max volume...
-                VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
-                SaveOptions;
-              end;
-              DisplayChart(IsChart);
-              Result:= True;
+        Result:= R.OpenKey(SETTINGS_KEY, True);
+        try
+          if Result then begin
+            //Load actual options
+            if R.ReadInteger('Active') = 1 then
+              swActive.State:= TToggleSwitchState.tssOn
+            else
+              swActive.State:= TToggleSwitchState.tssOff;
+            tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
+            tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
+            gMax.MainValue.Value:= R.ReadInteger('MaxVol');
+            if R.ReadInteger('UseChart') = 1 then
+              swUseChart.State:= tssOn
+            else
+              swUseChart.State:= tssOff;
+            if R.ValueExists('ChartData') then begin
+              S:= R.ReadString('ChartData');
+              VolChart.Points.LoadFromString(S);
+            end else begin
+              VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
+              SaveOptions;
             end;
-          finally
-            R.CloseKey;
+            DisplayChart(IsChart);
+            Result:= True;
           end;
+        finally
+          R.CloseKey;
         end;
       end;
     finally

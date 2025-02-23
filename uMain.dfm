@@ -109,7 +109,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       Align = alLeft
       ParentShowHint = False
       ShowHint = False
-      State = tssOn
       StateCaptions.CaptionOn = 'Chart: On'
       StateCaptions.CaptionOff = 'Chart: Off'
       SwitchWidth = 40
@@ -590,7 +589,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
   end
   object Vol: TJDVolumeControls
-    Volume = 35
+    Volume = 28
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
