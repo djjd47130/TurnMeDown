@@ -13,7 +13,7 @@ uses
   JD.Common, JD.VolumeControls, JD.FontGlyphs, JD.Ctrls,
   JD.Ctrls.Gauges,
   RzTrkBar, RzTray, RzPanel,
-  uAbout, uChart2,
+  uAbout,
   System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart,
   Winapi.MMSystem;
 

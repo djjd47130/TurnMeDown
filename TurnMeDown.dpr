@@ -6,8 +6,7 @@ uses
   uMain in 'uMain.pas' {frmTurnMeDownMain},
   Vcl.Themes,
   Vcl.Styles,
-  uAbout in 'uAbout.pas' {frmAbout},
-  uChart2 in 'uChart2.pas' {frmChart2};
+  uAbout in 'uAbout.pas' {frmAbout};
 
 {$R *.res}
 
