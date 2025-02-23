@@ -4,7 +4,7 @@
         <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -58,7 +58,7 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>TurnMeDown</SanitizedProjectName>
-        <Custom_Styles>&quot;Cobalt XEMedia|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CobaltXEMedia.vsf&quot;;&quot;Onyx Blue|VCLSTYLE|$(BDSCOMMONDIR)\Styles\OnyxBlue.vsf&quot;;&quot;Ruby Graphite|VCLSTYLE|$(BDSCOMMONDIR)\Styles\RubyGraphite.vsf&quot;;&quot;Blue Texture|VCLSTYLE|$(BDSCOMMONDIR)\Styles\BlueTexture.vsf&quot;;&quot;Sound Insulation|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Sound Insulation.vsf&quot;</Custom_Styles>
+        <Custom_Styles>&quot;Cobalt XEMedia|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CobaltXEMedia.vsf&quot;;&quot;Onyx Blue|VCLSTYLE|$(BDSCOMMONDIR)\Styles\OnyxBlue.vsf&quot;;&quot;Ruby Graphite|VCLSTYLE|$(BDSCOMMONDIR)\Styles\RubyGraphite.vsf&quot;;&quot;Blue Texture|VCLSTYLE|$(BDSCOMMONDIR)\Styles\BlueTexture.vsf&quot;;Marble|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Marble.vsf;&quot;Sound Insulation|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Sound Insulation.vsf&quot;</Custom_Styles>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;Mitov_VCL_VideoLab;DBXInterBaseDriver;vclactnband;vclFireDAC;OpenWireBindingPkg;bindcompvclsmp;tethering;svnui;Mitov_VCL_BasicLab;JDLibComponents;FireDACADSDriver;OpenWireEditorPkg;OpenWireBindingFmxPkg;JDGamesComps;vcltouch;AudioLabEssentialPkg;vcldb;bindcompfmx;svn;inetdb;Mitov_FMX_BasicLab;RaizeComponentsVcl;OpenWireEditorBasicPkg;FmxTeeUI;RaizeComponentsVclDb;OpenWireStudioVideoHostPkg;fmx;FireDACIBDriver;fmxdae;MSICS_RAD21_Rtl;vcledge;Mitov_VCL_AudioLab;dwsLibRuntime;dbexpress;IndyCore;TextLabBasicPkg;vclx;dsnap;Mitov_VCL_AudioLab_Essential;FireDACCommon;TimingLabBasicPkg;RESTBackendComponents;JDVisualsComponentsDX10_1;QR506RunDXE10;VCLRESTComponents;soapserver;JclDeveloperTools;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACMySQLDriver;FireDACCommonODBC;FireDACCommonDriver;Mitov_BasicLab;SignalLabScopePkg;LockBoxDR;inet;bindcompdbx;OpenWirePkg;IndyIPCommon;vcl;IndyIPServer;MediaLabBasicPkg;IndySystem;OpenWireStudioAudioHostPkg;Mitov_FMX_Windows_VideoLab_Basic;dsnapcon;Mitov_VCL_VideoLab_Basic;VirtualTreesR;FireDACMSAccDriver;fmxFireDAC;JDCardComponents;vclimg;TeeDB;FireDAC;Jcl;Mitov_Runtime;OpenWireStudioHostPkg;MiTeC_Common_RAD21;VideoLabPkg;FireDACSqliteDriver;FireDACPgDriver;ChromeTabs_R;FMXTee;soaprtl;DbxCommonDriver;OpenWireBindingDatabasePkg;JDUILib;Tee;Mitov_VCL_AudioLab_Basic;xmlrtl;soapmidas;fmxobj;vclwinx;VideoLabBasicPkg;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;VideoLabAdditionalPkg;SignalLabBasicPkg;AudioLabBasicPkg;MediaLabPkg;WMI_PKG;SignalLabAdditionalPkg;bindcomp;appanalytics;Mitov_VCL_Runtime;Mitov_VCL_VideoLab_Additional;AudioLabPkg;IndyIPClient;bindcompvcl;SynEdit_R;TeeUI;dbxcds;VclSmp;OpenWireBindingVclPkg;adortl;AudioLabGenericBasicPkg;SignalLabGenericBasicPkg;JclVcl;VideoLabGenericBasicPkg;dsnapxml;dbrtl;IndyProtocols;inetdbxpress;JclContainers;FMX_VideoLabBasicPkg;dclJDUILib;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -101,11 +101,10 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>8669809.ico</Icon_MainIcon>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
-        <VerInfo_MinorVer>5</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.5.0.3;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.5;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
+        <VerInfo_MinorVer>6</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.6.0.0;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.6;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
         <DCC_ExeOutput>.\Bin</DCC_ExeOutput>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Build>3</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

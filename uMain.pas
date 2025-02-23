@@ -233,6 +233,7 @@ end;
 
 procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+  //TODO: How to properly handle the event of app reinstall or Windows shutdown?
   case MessageDlg('Are you sure you wish to exit Turn Me Down?',
     mtConfirmation, [mbYes,mbNo], 0) of
     mrYes: begin
@@ -247,21 +248,13 @@ begin
 end;
 
 function GetMainBackgroundColor: TColor;
-var
-  Style: TCustomStyleServices;
-  Details: TThemedElementDetails;
-  Color: TColor;
 begin
-  Style := TStyleManager.ActiveStyle;
-  if Assigned(Style) then begin
-    Details := Style.GetElementDetails(twWindowRoot);
-    if Style.GetElementColor(Details, ecFillColor, Color) then begin
-      Result := Color;
-      Exit;
-    end;
-  end;
-  // Fallback to a default color if style or color not found
-  Result := clBtnFace;
+  Result:= TStyleManager.ActiveStyle.GetSystemColor(clBtnFace);
+end;
+
+function GetStyleHighlightColor: TColor;
+begin
+  Result:= TStyleManager.ActiveStyle.GetSystemColor(clHighlight);
 end;
 
 procedure TfrmTurnMeDownMain.FormCreate(Sender: TObject);
@@ -269,7 +262,7 @@ begin
 
   FMutex := CreateMutex(nil, False, 'TurnMeDown');
   if GetLastError = ERROR_ALREADY_EXISTS then begin
-    //MessageDlg('Another instance of this application is already running.', mtWarning, [mbOK], 0);
+    //TODO: Force existing instance to foreground / focus...
     BringExistingInstanceToFront;
     Application.Terminate;
   end;
@@ -278,17 +271,30 @@ begin
   ReportMemoryLeaksOnShutdown:= True;
   {$ENDIF}
 
+  //TODO: Make several styles for user to choose from...
+
   //TStyleManager.TrySetStyle('Blue Texture');
   //TStyleManager.TrySetStyle('Marble');
   //TStyleManager.TrySetStyle('Cobalt XEMedia');
   //TStyleManager.TrySetStyle('Sound Insulation');
-  TStyleManager.TrySetStyle('Ruby Graphite');
-  //TStyleManager.TrySetStyle('Onyx Blue');
+  //TStyleManager.TrySetStyle('Ruby Graphite');
+  TStyleManager.TrySetStyle('Onyx Blue');
 
   VolChart.Align:= alClient;
   Height:= 330;
 
-  //VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
+  VolChart.UI.Background.Transparent:= True;
+  VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
+
+  VolChart.UI.ChartArea.Line.Color.Color:= GetStyleHighlightColor;
+  VolChart.UI.ChartArea.Points.Color.Color:= GetStyleHighlightColor;
+  VolChart.UI.ChartArea.PointHover.Color.Color:= GetStyleHighlightColor;
+  VolChart.UI.ChartArea.Fill.Color.Color:= GetStyleHighlightColor;;
+
+  gVol.MainValue.Color.Color:= GetStyleHighlightColor;
+  gMax.MainValue.Color.Color:= GetStyleHighlightColor;
+
+  lblStatus.Font.Color:= GetStyleHighlightColor;
 
   LoadOptions;
 end;
@@ -380,15 +386,15 @@ begin
       if not R.ValueExists('Active') then
         R.WriteInteger('Active', 1);
       if not R.ValueExists('MaxVol') then
-        R.WriteInteger('MaxVol', 25);
+        R.WriteInteger('MaxVol', 20);
       if not R.ValueExists('QuietStart') then
         R.WriteString('QuietStart', '09:00 PM');
       if not R.ValueExists('QuietStop') then
         R.WriteString('QuietStop', '09:00 AM');
       if not R.ValueExists('UseChart') then
         R.WriteInteger('UseChart', 0);
-      //Ignore chart data.
-      //TODO: Startup...
+      if not R.ValueExists('ChartData') then
+        R.WriteString('ChartData', '');
     finally
       R.CloseKey;
     end;
@@ -433,17 +439,25 @@ begin
             tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
             tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
             gMax.MainValue.Value:= R.ReadInteger('MaxVol');
-            if R.ReadInteger('UseChart') = 1 then
-              swUseChart.State:= tssOn
-            else
-              swUseChart.State:= tssOff;
-            if R.ValueExists('ChartData') then begin
-              S:= R.ReadString('ChartData');
-              VolChart.Points.LoadFromString(S);
+            if R.ReadInteger('UseChart') = 1 then begin
+              swUseChart.State:= tssOn;
             end else begin
-              VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
-              SaveOptions;
+              swUseChart.State:= tssOff;
             end;
+
+            //Chart Data
+            S:= '';
+            if R.ValueExists('ChartData') then
+              S:= R.ReadString('ChartData');
+            if S = '' then begin
+              //Generate chart data for first time based on time range...
+              VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
+              S:= VolChart.Points.SaveToString;
+              R.WriteString('ChartData', S);
+            end;
+
+            VolChart.Points.LoadFromString(S);
+
             DisplayChart(IsChart);
             Result:= True;
           end;

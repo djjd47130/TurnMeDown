@@ -589,7 +589,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
   end
   object Vol: TJDVolumeControls
-    Volume = 28
+    Volume = 32
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16

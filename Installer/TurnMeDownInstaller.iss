@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Turn Me Down"
-#define MyAppVersion "0.5"
+#define MyAppVersion "0.6"
 #define MyAppPublisher "Jerry Dodge"
 #define MyAppURL "https://github.com/djjd47130/TurnMeDown"
 #define MyAppExeName "TurnMeDown.exe"
@@ -54,7 +54,7 @@ Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "Active"; ValueData: "1"; Flags: createvalueifdoesntexist
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "MaxVol"; ValueData: "20"; Flags: createvalueifdoesntexist
 Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: dword; ValueName: "UseChart"; ValueData: "0"; Flags: createvalueifdoesntexist
-Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStart"; ValueData: "09:00 AM"; Flags: createvalueifdoesntexist
-Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStop"; ValueData: "09:00 PM"; Flags: createvalueifdoesntexist       
-Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "ChartData"; Flags: dontcreatekey uninsdeletevalue
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStart"; ValueData: "09:00 PM"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "QuietStop"; ValueData: "09:00 AM"; Flags: createvalueifdoesntexist       
+Root: HKCU; Subkey: "Software\JD Software\TurnMeDown"; ValueType: string; ValueName: "ChartData"; ValueData: ""; Flags: createvalueifdoesntexist
 
