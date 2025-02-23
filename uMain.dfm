@@ -45,8 +45,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     TabOrder = 0
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitTop = 471
-    ExplicitWidth = 536
   end
   object pTopControl: TRzPanel
     AlignWithMargins = True
@@ -60,7 +58,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     TabOrder = 1
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitWidth = 530
     object swActive: TToggleSwitch
       AlignWithMargins = True
       Left = 3
@@ -99,7 +96,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       TabOrder = 1
       TabStop = False
       OnClick = swAutoStartClick
-      ExplicitLeft = 372
       ExplicitHeight = 20
     end
     object swUseChart: TToggleSwitch
@@ -137,7 +133,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Visible = False
     OnMouseDown = FormMouseDown
     OnResize = pQuietTimesResize
-    ExplicitWidth = 536
     object pQuietStart: TRzPanel
       AlignWithMargins = True
       Left = 3
@@ -195,7 +190,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       TabOrder = 1
       Transparent = True
       OnMouseDown = FormMouseDown
-      ExplicitWidth = 364
       object tpStop: TTimePicker
         Left = 0
         Top = 22
@@ -215,7 +209,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Time = 0.333333333333333300
         TimeFormat = 'h:mm AMPM'
         OnChange = tpStopChange
-        ExplicitWidth = 364
       end
       object StaticText2: TStaticText
         Left = 0
@@ -228,7 +221,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Caption = 'Quiet Time Stop'
         TabOrder = 1
         OnMouseDown = FormMouseDown
-        ExplicitWidth = 364
       end
     end
   end
@@ -250,8 +242,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     TabOrder = 3
     Transparent = True
     OnMouseDown = FormMouseDown
-    ExplicitTop = 441
-    ExplicitWidth = 536
     object lblStatus: TLabel
       Left = 0
       Top = 0
@@ -373,7 +363,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnMouseDown = gVolMouseDown
     OnMouseUp = gVolMouseUp
     OnMouseMove = gVolMouseMove
-    ExplicitWidth = 526
   end
   object gMax: TJDGauge
     AlignWithMargins = True
@@ -474,7 +463,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnMouseDown = gMaxMouseDown
     OnMouseUp = gMaxMouseUp
     OnMouseMove = gMaxMouseMove
-    ExplicitWidth = 526
   end
   object VolChart: TJDPlotChart
     Left = 0
@@ -484,7 +472,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Cursor = crCross
     Hint = 'Click and drag points to control volume'
     Align = alTop
-    DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -9
@@ -596,13 +583,14 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     UX.ChartArea.LinkLeftAndRight = True
     UX.ChartArea.SnapTolerance = 8.000000000000000000
     UX.ChartArea.AddPointAnywhere = False
+    OnMouseEnter = VolChartMouseEnter
+    OnMouseLeave = VolChartMouseLeave
     OnPointAdded = VolChartPointAdded
     OnPointMoved = VolChartPointMoved
     OnPointDeleted = VolChartPointDeleted
-    ExplicitWidth = 630
   end
   object Vol: TJDVolumeControls
-    Volume = 12
+    Volume = 35
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16

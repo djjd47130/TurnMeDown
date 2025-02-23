@@ -89,6 +89,8 @@ type
     procedure VolChartPointAdded(Sender: TObject; P: TJDPlotPoint);
     procedure VolChartPointDeleted(Sender: TObject; P: TJDPlotPoint);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure VolChartMouseEnter(Sender: TObject);
+    procedure VolChartMouseLeave(Sender: TObject);
   private
     FMutex: THandle;
     FLoading: Boolean;
@@ -99,6 +101,7 @@ type
     procedure ShowAbout;
     procedure DisplayChart(const AVisible: Boolean);
     function IsChart: Boolean;
+    procedure EnsureRegDefaults(R: TRegistry);
   public
     function LoadOptions: Boolean;
     function SaveOptions: Boolean;
@@ -369,6 +372,31 @@ begin
   end;
 end;
 
+procedure TfrmTurnMeDownMain.EnsureRegDefaults(R: TRegistry);
+var
+  Exists: Boolean;
+begin
+  Exists:= R.KeyExists(SETTINGS_KEY);
+  if R.OpenKey(SETTINGS_KEY, True) then begin
+    if not R.ValueExists('Active') then
+      R.WriteBool('Active', True);
+    if not R.ValueExists('MaxVol') then
+      R.WriteInteger('MaxVol', 25);
+    if not R.ValueExists('QuietStart') then
+      R.WriteString('QuietStart', '09:00 PM');
+    if not R.ValueExists('QuietStop') then
+      R.WriteString('QuietStop', '09:00 AM');
+    if not R.ValueExists('UseChart') then
+      R.WriteBool('UseChart', False);
+    //Ignore chart data.
+    //TODO: Startup...
+
+  end;
+  if not Exists then
+    if not IsAppInStartup('TurnMeDown') then
+      AddAppToStartup('TurnMeDown', Application.ExeName);
+end;
+
 function TfrmTurnMeDownMain.LoadOptions: Boolean;
 var
   R: TRegistry;
@@ -387,7 +415,11 @@ begin
     R:= TRegistry.Create(KEY_READ or KEY_WRITE);
     try
       R.RootKey:= HKEY_CURRENT_USER;
+
+      EnsureRegDefaults(R);
       Result:= R.KeyExists(SETTINGS_KEY);
+
+      {
       if not Result then begin
         Result:= R.CreateKey(SETTINGS_KEY);
         if Result then begin
@@ -405,6 +437,8 @@ begin
           end;
         end;
       end;
+      }
+
       if Result then begin
         Result:= R.KeyExists(SETTINGS_KEY);
         if Result then begin
@@ -434,6 +468,7 @@ begin
               end else begin
                 //Create chart data from time range and max volume...
                 VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
+                SaveOptions;
               end;
               DisplayChart(IsChart);
               Result:= True;
@@ -710,6 +745,16 @@ begin
     //Show time range and max vol...
     Height:= 300;
   end;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartMouseEnter(Sender: TObject);
+begin
+  Screen.Cursor:= crNone;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartMouseLeave(Sender: TObject);
+begin
+  Screen.Cursor:= crDefault;
 end;
 
 procedure TfrmTurnMeDownMain.VolChartPointAdded(Sender: TObject;
