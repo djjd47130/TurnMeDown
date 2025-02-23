@@ -14,7 +14,8 @@ uses
   JD.Ctrls.Gauges,
   RzTrkBar, RzTray, RzPanel,
   uAbout, uChart2,
-  System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart;
+  System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart,
+  Winapi.MMSystem;
 
 const
   SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
@@ -202,6 +203,12 @@ begin
   end;
 end;
 
+procedure PlayDefaultSystemSound;
+begin
+  // Play the system default sound
+  PlaySound('SystemDefault', 0, SND_ALIAS or SND_ASYNC);
+end;
+
 { TfrmTurnMeDownMain }
 
 procedure TfrmTurnMeDownMain.AppEventsHint(Sender: TObject);
@@ -212,6 +219,10 @@ end;
 procedure TfrmTurnMeDownMain.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
+  //TODO: Need to fix control so this isn't necessary.
+  //  Only reason I'm doing this is because on application shutdown,
+  //  they're still triggered after related things are already destroyed.
+  //  That ultimately results in Access Violations, which is no bueno.
   VolChart.OnPointAdded:= nil;
   VolChart.OnPointMoved:= nil;
   VolChart.OnPointDeleted:= nil;
@@ -607,6 +618,7 @@ begin
   if Button = TMouseButton.mbLeft then begin
     FChangingVol:= False;
     AssertVolume;
+    PlayDefaultSystemSound;
   end;
 end;
 
