@@ -95,6 +95,8 @@ type
       Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
     procedure tmrComeForthTimer(Sender: TObject);
     procedure TrayEndSession(Sender: TObject);
+    procedure VolChartGetAxisText(Sender: TObject; const Axis: TJDPlotChartAxis;
+      const Value: Single; var Text: string);
   private
     FSystemClose: Boolean;
     FMutex: THandle;
@@ -238,6 +240,32 @@ begin
     Reg.Free;
   end;
   Result:= StringReplace(Result, 'tt', 'AMPM', []);
+end;
+
+function TimeToDecimal(ATime: TTime): Single;
+begin
+  // Convert TTime to decimal hours
+  Result := HourOf(ATime) + (MinuteOf(ATime) / 60) + (SecondOf(ATime) / 3600);
+end;
+
+function DecimalToTime(ADecimal: Single): TTime;
+var
+  Hours, Minutes, Seconds: Word;
+begin
+  // Ensure the input is within valid range (0 to 24 hours)
+  if (ADecimal < 0) or (ADecimal >= 24) then
+  begin
+    Result := EncodeTime(0, 0, 0, 0); // Default to midnight
+    Exit;
+  end;
+
+  // Extract hours, minutes, and seconds from the decimal value
+  Hours := Trunc(ADecimal); // Integer part represents the hours
+  Minutes := Trunc(Frac(ADecimal) * 60); // Fractional part * 60 gives the minutes
+  Seconds := Trunc((Frac(ADecimal) * 60 - Minutes) * 60); // Remaining fraction * 60 gives the seconds
+
+  // Combine into a TTime value
+  Result := EncodeTime(Hours, Minutes, Seconds, 0); // Milliseconds are set to 0
 end;
 
 procedure TfrmTurnMeDownMain.FormCreate(Sender: TObject);
@@ -733,7 +761,7 @@ begin
   end;
 
   // #14 Show data at mouse position
-  VolChart.Hint:= 'Plot point: '+FormatFloat('0.###', FHover.X)+': '+FormatFloat('0.###%', FHover.Y);
+  VolChart.Hint:= 'Plot point: '+FormatDateTime('h:nn AMPM', DecimalToTime(FHover.X))+': '+FormatFloat('0.###%', FHover.Y);
 end;
 
 procedure TfrmTurnMeDownMain.DisplayChart(const AVisible: Boolean);
@@ -754,12 +782,6 @@ begin
   end;
 end;
 
-function TimeToDecimal(ATime: TTime): Single;
-begin
-  // Convert TTime to decimal hours
-  Result := HourOf(ATime) + (MinuteOf(ATime) / 60) + (SecondOf(ATime) / 3600);
-end;
-
 procedure TfrmTurnMeDownMain.VolChartCustomCrosshair(Sender: TObject;
   Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
 begin
@@ -770,6 +792,18 @@ begin
       //Return X as current time...
       X:= TimeToDecimal(Now);
     end;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.VolChartGetAxisText(Sender: TObject;
+  const Axis: TJDPlotChartAxis; const Value: Single; var Text: string);
+begin
+  case Axis of
+    caBottom: begin
+      Text:= FormatDateTime('h:nn AMPM', DecimalToTime(Value));
+    end;
+    caLeft: ;
+    caRight: ;
   end;
 end;
 

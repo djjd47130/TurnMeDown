@@ -591,7 +591,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     UI.ChartArea.Padding = 15.000000000000000000
     UX.ChartArea.AxisBottom.AxisType = atCustom
     UX.ChartArea.AxisBottom.Max = 24.000000000000000000
-    UX.ChartArea.AxisBottom.Frequency = 2.000000000000000000
+    UX.ChartArea.AxisBottom.Frequency = 3.000000000000000000
     UX.ChartArea.AxisLeft.AxisType = atPercent
     UX.ChartArea.AxisLeft.Max = 100.000000000000000000
     UX.ChartArea.AxisLeft.Frequency = 20.000000000000000000
@@ -607,11 +607,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
     OnHoverMousePoint = VolChartHoverMousePoint
     OnCustomCrosshair = VolChartCustomCrosshair
-    ExplicitLeft = -3
-    ExplicitTop = 207
+    OnGetAxisText = VolChartGetAxisText
   end
   object Vol: TJDVolumeControls
-    Volume = 26
+    Volume = 21
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
