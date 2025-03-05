@@ -102,6 +102,7 @@ type
     FLoading: Boolean;
     FChangingMax: Boolean;
     FChangingVol: Boolean;
+    FHover: TPointF;
     procedure AssertVolume;
     procedure BringExistingInstanceToFront;
     procedure ShowAbout;
@@ -773,7 +774,7 @@ end;
 
 procedure TfrmTurnMeDownMain.tmrComeForthTimer(Sender: TObject);
 begin
-  //Check registry entry to show itself when needed...
+  //#1 - Check registry entry to show itself when needed...
   var R: TRegistry:= TRegistry.Create(KEY_READ or KEY_WRITE);
   try
     R.RootKey:= HKEY_CURRENT_USER;
@@ -795,6 +796,8 @@ begin
   finally
     R.Free;
   end;
+
+  VolChart.Hint:= 'Plot point: '+FormatFloat('0.###', FHover.X)+': '+FormatFloat('0.###%', FHover.Y);
 end;
 
 procedure TfrmTurnMeDownMain.DisplayChart(const AVisible: Boolean);
@@ -804,6 +807,7 @@ begin
   pQuietTimes.Visible:= not AVisible;
   lblStatus.Visible:= not AVisible;
 
+  //TODO: Account for window state...
   if AVisible then begin
     //Show chart...
     Height:= 420;
@@ -816,14 +820,16 @@ end;
 procedure TfrmTurnMeDownMain.VolChartCustomCrosshair(Sender: TObject;
   Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
 begin
-  //TODO
+  //TODO: #15 Show Position current volume crosshair...
+
 
 end;
 
 procedure TfrmTurnMeDownMain.VolChartHoverMousePoint(Sender: TObject; X,
   Y: Single);
 begin
-  VolChart.Hint:= 'Plot point: '+FormatFloat('0.000', X)+': '+FormatFloat('0.###%', Y);
+  //User is hovering mouse over chart - cache hover position...
+  FHover:= PointF(X, Y);
 end;
 
 procedure TfrmTurnMeDownMain.VolChartMouseEnter(Sender: TObject);
@@ -835,7 +841,6 @@ procedure TfrmTurnMeDownMain.VolChartMouseLeave(Sender: TObject);
 begin
   Screen.Cursor:= crDefault;
   Application.Hint:= '';
-  //Click and drag points to control volume
 end;
 
 procedure TfrmTurnMeDownMain.VolChartPointAdded(Sender: TObject;
@@ -858,6 +863,8 @@ end;
 
 procedure TfrmTurnMeDownMain.VolVolumeChanged(Sender: TObject; const Volume: Integer);
 begin
+  //Detected system volume change...
+  //TODO: #12 Update "saved" volume if differs from current...
   gVol.MainValue.Value:= Vol.Volume;
   AssertVolume;
 end;
@@ -865,6 +872,7 @@ end;
 procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
 
+  // #11 Properly handle close query
   //TODO: How to properly handle the event of app reinstall or Windows shutdown?
   if not FSystemClose then begin
     case MessageDlg('Are you sure you wish to exit Turn Me Down?',
@@ -887,6 +895,7 @@ procedure TfrmTurnMeDownMain.WMClose(var Msg: TWMClose);
 var
   CanClose: Boolean;
 begin
+  // #11 Properly handle close query
   // User-initiated close
   if FSystemClose then begin
     // System-initiated close; allow application to close automatically
@@ -902,6 +911,7 @@ end;
 
 procedure TfrmTurnMeDownMain.WMEndSession(var Msg: TWMEndSession);
 begin
+  // #11 Properly handle close query
   // System-initiated close (e.g., shutdown, logoff)
   FSystemClose:= True;
   inherited;
@@ -909,6 +919,7 @@ end;
 
 procedure TfrmTurnMeDownMain.WMQueryEndSession(var Msg: TWMQueryEndSession);
 begin
+  // #11 Properly handle close query
   // System-initiated close (e.g., shutdown, logoff)
   FSystemClose:= True;
   Msg.Result := 1;
@@ -917,6 +928,7 @@ end;
 
 procedure TfrmTurnMeDownMain.WMSettingChange(var Msg: TMessage);
 begin
+  // #10 Respect locale settings
   if (Msg.WParam = 0) and (PChar(Msg.LParam) = 'intl') then begin
     tpStart.TimeFormat:= GetTimeFormatFromSystem;
     tpStop.TimeFormat:= GetTimeFormatFromSystem;

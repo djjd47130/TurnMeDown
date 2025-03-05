@@ -607,10 +607,11 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
     OnHoverMousePoint = VolChartHoverMousePoint
     OnCustomCrosshair = VolChartCustomCrosshair
+    ExplicitLeft = 3
     ExplicitTop = 204
   end
   object Vol: TJDVolumeControls
-    Volume = 72
+    Volume = 18
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
