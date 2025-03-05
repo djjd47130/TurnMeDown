@@ -269,7 +269,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     Left = 5
     Top = 164
     Width = 544
-    Height = 34
+    Height = 37
     Cursor = crHandPoint
     Hint = 'Current system volume'
     Margins.Left = 5
@@ -465,7 +465,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   end
   object VolChart: TJDPlotChart
     Left = 0
-    Top = 201
+    Top = 204
     Width = 554
     Height = 168
     Cursor = crCross
@@ -486,15 +486,15 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       end
       item
         CrosshairType = ctPlotLine
-        Horizontal.Color.Color = clLime
+        Horizontal.Color.Color = clRed
         Horizontal.Color.UseStandardColor = False
         Horizontal.Alpha = 120
-        Horizontal.Width = 2.000000000000000000
+        Horizontal.Width = 1.000000000000000000
         Horizontal.Visible = True
-        Vertical.Color.Color = clLime
+        Vertical.Color.Color = clRed
         Vertical.Color.UseStandardColor = False
         Vertical.Alpha = 120
-        Vertical.Width = 2.000000000000000000
+        Vertical.Width = 1.000000000000000000
         Vertical.Visible = True
         X = 8.500000000000000000
         Y = 50.000000000000000000
@@ -607,10 +607,11 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
     OnHoverMousePoint = VolChartHoverMousePoint
     OnCustomCrosshair = VolChartCustomCrosshair
-    ExplicitTop = 204
+    ExplicitLeft = -3
+    ExplicitTop = 207
   end
   object Vol: TJDVolumeControls
-    Volume = 10
+    Volume = 26
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
@@ -628,7 +629,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     PopupMenu = TrayPop
     Icons = TrayImg
     Interval = 500
-    OnQueryEndSession = TrayQueryEndSession
+    OnEndSession = TrayEndSession
     Left = 16
     Top = 424
   end

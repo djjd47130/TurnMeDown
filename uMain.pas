@@ -15,7 +15,7 @@ uses
   RzTrkBar, RzTray, RzPanel,
   uAbout,
   System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart,
-  Winapi.MMSystem, OWPinBindingManager;
+  Winapi.MMSystem;
 
 const
   SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
@@ -70,8 +70,6 @@ type
     procedure mAboutClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure pQuietTimesResize(Sender: TObject);
-    procedure TrayQueryEndSession(Sender: TObject;
-      var AllowSessionToEnd: Boolean);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure FormShow(Sender: TObject);
@@ -96,6 +94,7 @@ type
     procedure VolChartCustomCrosshair(Sender: TObject;
       Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
     procedure tmrComeForthTimer(Sender: TObject);
+    procedure TrayEndSession(Sender: TObject);
   private
     FSystemClose: Boolean;
     FMutex: THandle;
@@ -110,9 +109,7 @@ type
     function IsChart: Boolean;
     procedure EnsureRegDefaults(R: TRegistry);
     procedure WMSettingChange(var Msg: TMessage); message WM_SETTINGCHANGE;
-    procedure WMClose(var Msg: TWMClose); message WM_CLOSE;
-    procedure WMQueryEndSession(var Msg: TWMQueryEndSession); message WM_QUERYENDSESSION;
-    procedure WMEndSession(var Msg: TWMEndSession); message WM_ENDSESSION;
+    procedure WMQueryEndSession(var Msg: TMessage); message WM_QUERYENDSESSION;
   public
     function LoadOptions: Boolean;
     function SaveOptions: Boolean;
@@ -184,44 +181,6 @@ begin
     Reg.Free;
   end;
 end;
-
-
-
-//#1 Prevent multiple instances
-//Mechanism below doesn't seem to work. Has been solved with different approach.
-
-{
-const
-  ASFW_ANY = DWORD(-1);
-
-procedure SetForegroundWindowInternal(hWnd: HWND);
-var
-  hCurrWnd: THandle;
-  dwThisTID, dwCurrTID: DWORD;
-  lockTimeOut: DWORD;
-begin
-  if not IsWindow(hWnd) then
-    Exit;
-
-  hCurrWnd := GetForegroundWindow;
-  dwThisTID := GetCurrentThreadId;
-  dwCurrTID := GetWindowThreadProcessId(hCurrWnd, nil);
-
-  if dwThisTID <> dwCurrTID then begin
-    AttachThreadInput(dwThisTID, dwCurrTID, True);
-    SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, @lockTimeOut, 0);
-    SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, nil, SPIF_SENDWININICHANGE or SPIF_UPDATEINIFILE);
-    AllowSetForegroundWindow(ASFW_ANY);
-  end;
-
-  SetForegroundWindow(hWnd);
-
-  if dwThisTID <> dwCurrTID then begin
-    SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, @lockTimeOut, SPIF_SENDWININICHANGE or SPIF_UPDATEINIFILE);
-    AttachThreadInput(dwThisTID, dwCurrTID, False);
-  end;
-end;
-}
 
 procedure PlayDefaultSystemSound;
 begin
@@ -314,7 +273,6 @@ begin
   VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
   VolChart.UI.ChartArea.Line.Color.Color:= GetStyleHighlightColor;
   VolChart.UI.ChartArea.Points.Color.Color:= GetStyleHighlightColor;
-  //VolChart.UI.ChartArea.PointHover.Color.Color:= GetStyleHighlightColor;
   VolChart.UI.ChartArea.Fill.Color.Color:= GetStyleHighlightColor;;
   gVol.MainValue.Color.Color:= GetStyleHighlightColor;
   gMax.MainValue.Color.Color:= GetStyleHighlightColor;
@@ -354,13 +312,10 @@ begin
 end;
 
 procedure TfrmTurnMeDownMain.BringExistingInstanceToFront;
-//var
-  //ExistingWnd: HWND;
 begin
   // #1 Prevent multiple instances
   // FIXED by dirty mechanism to save "ComeForth" value in registry,
   // then use timer to check for this value.
-
   var R: TRegistry:= TRegistry.Create(KEY_READ or KEY_WRITE);
   try
     R.RootKey:= HKEY_CURRENT_USER;
@@ -374,7 +329,6 @@ begin
   finally
     R.Free;
   end;
-
 end;
 
 function TfrmTurnMeDownMain.IsActive: Boolean;
@@ -463,45 +417,42 @@ begin
       R.RootKey:= HKEY_CURRENT_USER;
 
       EnsureRegDefaults(R);
-      Result:= True; // R.KeyExists(SETTINGS_KEY);
 
-      if Result then begin
-        Result:= R.OpenKey(SETTINGS_KEY, True);
-        try
-          if Result then begin
-            //Load actual options
-            if R.ReadInteger('Active') = 1 then
-              swActive.State:= TToggleSwitchState.tssOn
-            else
-              swActive.State:= TToggleSwitchState.tssOff;
-            tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
-            tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
-            gMax.MainValue.Value:= R.ReadInteger('MaxVol');
-            if R.ReadInteger('UseChart') = 1 then begin
-              swUseChart.State:= tssOn;
-            end else begin
-              swUseChart.State:= tssOff;
-            end;
-
-            //Chart Data
-            S:= '';
-            if R.ValueExists('ChartData') then
-              S:= R.ReadString('ChartData');
-            if S = '' then begin
-              //Generate chart data for first time based on time range...
-              VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
-              S:= VolChart.Points.SaveToString;
-              R.WriteString('ChartData', S);
-            end;
-
-            VolChart.Points.LoadFromString(S);
-
-            DisplayChart(IsChart);
-            Result:= True;
+      Result:= R.OpenKey(SETTINGS_KEY, True);
+      try
+        if Result then begin
+          //Load actual options
+          if R.ReadInteger('Active') = 1 then
+            swActive.State:= TToggleSwitchState.tssOn
+          else
+            swActive.State:= TToggleSwitchState.tssOff;
+          tpStart.Time:= StrToTimeDef(R.ReadString('QuietStart'), 0);
+          tpStop.Time:= StrToTimeDef(R.ReadString('QuietStop'), 0);
+          gMax.MainValue.Value:= R.ReadInteger('MaxVol');
+          if R.ReadInteger('UseChart') = 1 then begin
+            swUseChart.State:= tssOn;
+          end else begin
+            swUseChart.State:= tssOff;
           end;
-        finally
-          R.CloseKey;
+
+          //Chart Data
+          S:= '';
+          if R.ValueExists('ChartData') then
+            S:= R.ReadString('ChartData');
+          if S = '' then begin
+            //Generate chart data for first time based on time range...
+            VolChart.CreatePlotPoints(tpStart.Time, tpStop.Time, gMax.MainValue.Value);
+            S:= VolChart.Points.SaveToString;
+            R.WriteString('ChartData', S);
+          end;
+
+          VolChart.Points.LoadFromString(S);
+
+          DisplayChart(IsChart);
+          Result:= True;
         end;
+      finally
+        R.CloseKey;
       end;
     finally
       R.Free;
@@ -529,7 +480,6 @@ begin
         R.WriteString('QuietStop', FormatDateTime('hh:nn AMPM', tpStop.Time));
         R.WriteInteger('MaxVol', Round(gMax.MainValue.Value));
         R.WriteInteger('UseChart', IfThen(IsChart, 1, 0));
-        //TODO: Chart data...
         R.WriteString('ChartData', VolChart.Points.SaveToString);
         Result:= True;
       end else begin
@@ -726,16 +676,15 @@ begin
   SaveOptions;
 end;
 
+procedure TfrmTurnMeDownMain.TrayEndSession(Sender: TObject);
+begin
+  FSystemClose:= True;
+end;
+
 procedure TfrmTurnMeDownMain.TrayPopPopup(Sender: TObject);
 begin
   //mShowHide.Caption:= IfThen(WindowState = wsNormal, 'Hide', 'Show');
   mEnabled.Checked:= IsActive;
-end;
-
-procedure TfrmTurnMeDownMain.TrayQueryEndSession(Sender: TObject;
-  var AllowSessionToEnd: Boolean);
-begin
-  AllowSessionToEnd:= True;
 end;
 
 procedure TfrmTurnMeDownMain.TmrTimer(Sender: TObject);
@@ -783,6 +732,7 @@ begin
     R.Free;
   end;
 
+  // #14 Show data at mouse position
   VolChart.Hint:= 'Plot point: '+FormatFloat('0.###', FHover.X)+': '+FormatFloat('0.###%', FHover.Y);
 end;
 
@@ -794,6 +744,7 @@ begin
   lblStatus.Visible:= not AVisible;
 
   //TODO: Account for window state...
+
   if AVisible then begin
     //Show chart...
     Height:= 420;
@@ -812,7 +763,7 @@ end;
 procedure TfrmTurnMeDownMain.VolChartCustomCrosshair(Sender: TObject;
   Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
 begin
-  //TODO: #15 Show Position current volume crosshair...
+  // #15 Show Position current volume crosshair...
   case Crosshair.Index of
     0: ;
     1: begin
@@ -825,7 +776,7 @@ end;
 procedure TfrmTurnMeDownMain.VolChartHoverMousePoint(Sender: TObject; X,
   Y: Single);
 begin
-  //User is hovering mouse over chart - cache hover position...
+  // #14 User is hovering mouse over chart - cache hover position...
   FHover:= PointF(X, Y);
 end;
 
@@ -868,15 +819,12 @@ end;
 
 procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-
   // #11 Properly handle close query
-  //TODO: How to properly handle the event of app reinstall or Windows shutdown?
   if not FSystemClose then begin
     case MessageDlg('Are you sure you wish to exit Turn Me Down?',
       mtConfirmation, [mbYes,mbNo], 0) of
       mrYes: begin
         CanClose:= True;
-        FSystemClose:= True;
       end;
       else begin
         CanClose:= False;
@@ -884,43 +832,16 @@ begin
     end;
   end else begin
     CanClose:= True;
-  end;
-
-end;
-
-procedure TfrmTurnMeDownMain.WMClose(var Msg: TWMClose);
-var
-  CanClose: Boolean;
-begin
-  // #11 Properly handle close query
-  // User-initiated close
-  if FSystemClose then begin
-    // System-initiated close; allow application to close automatically
-    inherited;
-  end else begin
-    // User-initiated close
-    CanClose := True;
-    FormCloseQuery(Self, CanClose);
-    if CanClose then
-      inherited;
+    Application.Terminate; //TEST FORCE - Dirty, but it works.
   end;
 end;
 
-procedure TfrmTurnMeDownMain.WMEndSession(var Msg: TWMEndSession);
+procedure TfrmTurnMeDownMain.WMQueryEndSession(var Msg: TMessage);
 begin
   // #11 Properly handle close query
-  // System-initiated close (e.g., shutdown, logoff)
   FSystemClose:= True;
-  inherited;
-end;
-
-procedure TfrmTurnMeDownMain.WMQueryEndSession(var Msg: TWMQueryEndSession);
-begin
-  // #11 Properly handle close query
-  // System-initiated close (e.g., shutdown, logoff)
-  FSystemClose:= True;
-  Msg.Result := 1;
-  inherited;
+  Msg.Result:= Ord(True);
+  Application.Terminate; //TEST FORCE - Dirty, but it works.
 end;
 
 procedure TfrmTurnMeDownMain.WMSettingChange(var Msg: TMessage);

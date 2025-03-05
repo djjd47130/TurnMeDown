@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Turn Me Down"
-#define MyAppVersion "0.7"
+#define MyAppVersion "0.8"
 #define MyAppPublisher "Jerry Dodge"
 #define MyAppURL "https://github.com/djjd47130/TurnMeDown"
 #define MyAppExeName "TurnMeDown.exe"
@@ -11,6 +11,7 @@
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{C7176E3A-E16F-4814-9DFF-E6D9236E4C40}
+;AppMutex=TurnMeDown
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
