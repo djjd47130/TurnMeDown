@@ -101,11 +101,11 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>8669809.ico</Icon_MainIcon>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
-        <VerInfo_MinorVer>8</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.8.0.16;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.8;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
+        <VerInfo_MinorVer>7</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=Jerry Dodge;FileDescription=$(MSBuildProjectName);FileVersion=0.7.0.17;InternalName=TurnMeDown;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.jerrydodge.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=0.7;Comments=Windows tool to restrict volume during quiet hours</VerInfo_Keys>
         <DCC_ExeOutput>.\Bin</DCC_ExeOutput>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Build>16</VerInfo_Build>
+        <VerInfo_Build>17</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
