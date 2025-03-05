@@ -1,4 +1,4 @@
-unit uMain;
+﻿unit uMain;
 
 interface
 
@@ -15,7 +15,7 @@ uses
   RzTrkBar, RzTray, RzPanel,
   uAbout,
   System.ImageList, Vcl.ImgList, Vcl.Mask, RzEdit, JD.Ctrls.PlotChart,
-  Winapi.MMSystem;
+  Winapi.MMSystem, OWPinBindingManager;
 
 const
   SETTINGS_KEY = 'Software\JD Software\TurnMeDown';
@@ -51,6 +51,7 @@ type
     gMax: TJDGauge;
     VolChart: TJDPlotChart;
     swUseChart: TToggleSwitch;
+    tmrComeForth: TTimer;
     procedure VolVolumeChanged(Sender: TObject; const Volume: Integer);
     procedure TmrTimer(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -91,7 +92,12 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure VolChartMouseEnter(Sender: TObject);
     procedure VolChartMouseLeave(Sender: TObject);
+    procedure VolChartHoverMousePoint(Sender: TObject; X, Y: Single);
+    procedure VolChartCustomCrosshair(Sender: TObject;
+      Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
+    procedure tmrComeForthTimer(Sender: TObject);
   private
+    FSystemClose: Boolean;
     FMutex: THandle;
     FLoading: Boolean;
     FChangingMax: Boolean;
@@ -102,6 +108,10 @@ type
     procedure DisplayChart(const AVisible: Boolean);
     function IsChart: Boolean;
     procedure EnsureRegDefaults(R: TRegistry);
+    procedure WMSettingChange(var Msg: TMessage); message WM_SETTINGCHANGE;
+    procedure WMClose(var Msg: TWMClose); message WM_CLOSE;
+    procedure WMQueryEndSession(var Msg: TWMQueryEndSession); message WM_QUERYENDSESSION;
+    procedure WMEndSession(var Msg: TWMEndSession); message WM_ENDSESSION;
   public
     function LoadOptions: Boolean;
     function SaveOptions: Boolean;
@@ -173,6 +183,12 @@ begin
   end;
 end;
 
+
+
+//#1 Prevent multiple instances
+//Mechanism below doesn't seem to work. Has been solved with different approach.
+
+{
 const
   ASFW_ANY = DWORD(-1);
 
@@ -189,8 +205,7 @@ begin
   dwThisTID := GetCurrentThreadId;
   dwCurrTID := GetWindowThreadProcessId(hCurrWnd, nil);
 
-  if dwThisTID <> dwCurrTID then
-  begin
+  if dwThisTID <> dwCurrTID then begin
     AttachThreadInput(dwThisTID, dwCurrTID, True);
     SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, @lockTimeOut, 0);
     SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, nil, SPIF_SENDWININICHANGE or SPIF_UPDATEINIFILE);
@@ -199,16 +214,19 @@ begin
 
   SetForegroundWindow(hWnd);
 
-  if dwThisTID <> dwCurrTID then
-  begin
+  if dwThisTID <> dwCurrTID then begin
     SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, @lockTimeOut, SPIF_SENDWININICHANGE or SPIF_UPDATEINIFILE);
     AttachThreadInput(dwThisTID, dwCurrTID, False);
   end;
 end;
+}
 
 procedure PlayDefaultSystemSound;
 begin
   // Play the system default sound
+  // NOTE: This plays at the volume associated with THIS app, not with the system.
+  //   Therefore, don't expect the volume of this sound feedback to be equivalent
+  //   of the volume when doing the same from the Windows main volume control itself.
   PlaySound('SystemDefault', 0, SND_ALIAS or SND_ASYNC);
 end;
 
@@ -231,22 +249,6 @@ begin
   VolChart.OnPointDeleted:= nil;
 end;
 
-procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-begin
-  //TODO: How to properly handle the event of app reinstall or Windows shutdown?
-  case MessageDlg('Are you sure you wish to exit Turn Me Down?',
-    mtConfirmation, [mbYes,mbNo], 0) of
-    mrYes: begin
-      CanClose:= True;
-    end;
-    else begin
-      CanClose:= False;
-    end;
-  end;
-  //CanClose:= False;
-  //Tray.MinimizeApp;
-end;
-
 function GetMainBackgroundColor: TColor;
 begin
   Result:= TStyleManager.ActiveStyle.GetSystemColor(clBtnFace);
@@ -257,22 +259,41 @@ begin
   Result:= TStyleManager.ActiveStyle.GetSystemColor(clHighlight);
 end;
 
+function GetTimeFormatFromSystem: string;
+var
+  Reg: TRegistry;
+begin
+  Reg := TRegistry.Create(KEY_READ);
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly('Control Panel\International') then
+    begin
+      Result := Reg.ReadString('sShortTime');
+      Reg.CloseKey;
+    end
+    else
+      Result := 'hh:mm tt'; // Default format if retrieval fails
+  finally
+    Reg.Free;
+  end;
+  Result:= StringReplace(Result, 'tt', 'AMPM', []);
+end;
+
 procedure TfrmTurnMeDownMain.FormCreate(Sender: TObject);
 begin
 
+  // #11 Properly handle close query
+  FSystemClose:= False;
+
+  // #1 Prevent multiple instances
   FMutex := CreateMutex(nil, False, 'TurnMeDown');
   if GetLastError = ERROR_ALREADY_EXISTS then begin
-    //TODO: Force existing instance to foreground / focus...
     BringExistingInstanceToFront;
+    FSystemClose:= True;
     Application.Terminate;
   end;
 
-  {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown:= True;
-  {$ENDIF}
-
   //TODO: Make several styles for user to choose from...
-
   //TStyleManager.TrySetStyle('Blue Texture');
   //TStyleManager.TrySetStyle('Marble');
   //TStyleManager.TrySetStyle('Cobalt XEMedia');
@@ -280,22 +301,28 @@ begin
   //TStyleManager.TrySetStyle('Ruby Graphite');
   TStyleManager.TrySetStyle('Onyx Blue');
 
+  {$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown:= True;
+  {$ENDIF}
+
+  // Setup UI
   VolChart.Align:= alClient;
   Height:= 330;
-
   VolChart.UI.Background.Transparent:= True;
   VolChart.UI.Background.Color.Color:= GetMainBackgroundColor;
-
   VolChart.UI.ChartArea.Line.Color.Color:= GetStyleHighlightColor;
   VolChart.UI.ChartArea.Points.Color.Color:= GetStyleHighlightColor;
-  VolChart.UI.ChartArea.PointHover.Color.Color:= GetStyleHighlightColor;
+  //VolChart.UI.ChartArea.PointHover.Color.Color:= GetStyleHighlightColor;
   VolChart.UI.ChartArea.Fill.Color.Color:= GetStyleHighlightColor;;
-
   gVol.MainValue.Color.Color:= GetStyleHighlightColor;
   gMax.MainValue.Color.Color:= GetStyleHighlightColor;
-
   lblStatus.Font.Color:= GetStyleHighlightColor;
 
+  // Setup Locale
+  tpStart.TimeFormat:= GetTimeFormatFromSystem;
+  tpStop.TimeFormat:= GetTimeFormatFromSystem;
+
+  // Load User Options
   LoadOptions;
 end;
 
@@ -328,6 +355,27 @@ procedure TfrmTurnMeDownMain.BringExistingInstanceToFront;
 var
   ExistingWnd: HWND;
 begin
+  // #1 Prevent multiple instances
+  // FIXED by dirty mechanism to save "ComeForth" value in registry,
+  // then use timer to check for this value.
+
+  var R: TRegistry:= TRegistry.Create(KEY_READ or KEY_WRITE);
+  try
+    R.RootKey:= HKEY_CURRENT_USER;
+    var Exists: Boolean:= R.KeyExists(SETTINGS_KEY);
+    if R.OpenKey(SETTINGS_KEY, True) then begin
+      try
+        R.WriteBool('ComeForth', True);
+      finally
+        R.CloseKey;
+      end;
+    end;
+  finally
+    R.Free;
+  end;
+
+  {
+  //NOT WORKING...
   ExistingWnd := FindWindow(nil, 'Turn Me Down');
   if ExistingWnd <> 0 then begin
     // Restore the window if it is minimized
@@ -339,6 +387,7 @@ begin
     //SetForegroundWindow(ExistingWnd);
     SetForegroundWindowInternal(ExistingWnd);
   end;
+  }
 end;
 
 function TfrmTurnMeDownMain.IsActive: Boolean;
@@ -355,6 +404,7 @@ function TfrmTurnMeDownMain.IsInQuietHours: Boolean;
 var
   T, T1, T2: TTime;
 begin
+  //Determines whether current time is within quiet hours...
   T := Time;
   T1 := tpStart.Time;
   T2 := tpStop.Time;
@@ -370,6 +420,7 @@ end;
 procedure TfrmTurnMeDownMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  //Shared code to move form by mouse click/drag...
   if Button = mbLeft then begin
     ReleaseCapture;
     Perform(WM_SYSCOMMAND, $F012, 0);
@@ -477,8 +528,8 @@ function TfrmTurnMeDownMain.SaveOptions: Boolean;
 var
   R: TRegistry;
 begin
-
   Result:= False;
+  if FSystemClose then Exit;
   if FLoading then Exit;
   R:= TRegistry.Create(KEY_READ or KEY_WRITE);
   try
@@ -650,29 +701,31 @@ var
 begin
 
   if IsActive then begin
+
+    lblStatus.Visible:= True;
+    Tray.Icons:= TrayImg;
+    Tray.Animate:= True;
+    Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
+
     if IsChart then begin
-      lblStatus.Visible:= True;
-      Tray.Icons:= TrayImg;
-      Tray.Animate:= True;
-      Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
       MaxVol:= Round(VolChart.GetTimePerc(Now));
     end else
     if IsInQuietHours then begin
-      lblStatus.Visible:= True;
-      Tray.Icons:= TrayImg;
-      Tray.Animate:= True;
-      Tray.Hint:= 'Turn Me Down (Enforcing Quiet Time)';
       MaxVol:= Round(gMax.MainValue.Value);
     end else begin
       MaxVol:= 100;
     end;
+
     if Vol.Volume > MaxVol then
       Vol.Volume:= MaxVol;
+
   end else begin
+
     lblStatus.Visible:= False;
     Tray.Icons:= nil;
     Tray.Animate:= False;
     Tray.Hint:= 'Turn Me Down';
+
   end;
 end;
 
@@ -718,6 +771,32 @@ begin
   SaveOptions;
 end;
 
+procedure TfrmTurnMeDownMain.tmrComeForthTimer(Sender: TObject);
+begin
+  //Check registry entry to show itself when needed...
+  var R: TRegistry:= TRegistry.Create(KEY_READ or KEY_WRITE);
+  try
+    R.RootKey:= HKEY_CURRENT_USER;
+    if R.OpenKey(SETTINGS_KEY, True) then begin
+      try
+
+        if R.ValueExists('ComeForth') then begin
+          R.DeleteValue('ComeForth');
+          Self.Show;
+          Self.BringToFront;
+          Application.BringToFront;
+          mShowHideClick(nil);
+        end;
+
+      finally
+        R.CloseKey;
+      end;
+    end;
+  finally
+    R.Free;
+  end;
+end;
+
 procedure TfrmTurnMeDownMain.DisplayChart(const AVisible: Boolean);
 begin
   VolChart.Visible:= AVisible;
@@ -734,6 +813,19 @@ begin
   end;
 end;
 
+procedure TfrmTurnMeDownMain.VolChartCustomCrosshair(Sender: TObject;
+  Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
+begin
+  //TODO
+
+end;
+
+procedure TfrmTurnMeDownMain.VolChartHoverMousePoint(Sender: TObject; X,
+  Y: Single);
+begin
+  VolChart.Hint:= 'Plot point: '+FormatFloat('0.000', X)+': '+FormatFloat('0.###%', Y);
+end;
+
 procedure TfrmTurnMeDownMain.VolChartMouseEnter(Sender: TObject);
 begin
   Screen.Cursor:= crNone;
@@ -742,6 +834,8 @@ end;
 procedure TfrmTurnMeDownMain.VolChartMouseLeave(Sender: TObject);
 begin
   Screen.Cursor:= crDefault;
+  Application.Hint:= '';
+  //Click and drag points to control volume
 end;
 
 procedure TfrmTurnMeDownMain.VolChartPointAdded(Sender: TObject;
@@ -766,6 +860,67 @@ procedure TfrmTurnMeDownMain.VolVolumeChanged(Sender: TObject; const Volume: Int
 begin
   gVol.MainValue.Value:= Vol.Volume;
   AssertVolume;
+end;
+
+procedure TfrmTurnMeDownMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+
+  //TODO: How to properly handle the event of app reinstall or Windows shutdown?
+  if not FSystemClose then begin
+    case MessageDlg('Are you sure you wish to exit Turn Me Down?',
+      mtConfirmation, [mbYes,mbNo], 0) of
+      mrYes: begin
+        CanClose:= True;
+        FSystemClose:= True;
+      end;
+      else begin
+        CanClose:= False;
+      end;
+    end;
+  end else begin
+    CanClose:= True;
+  end;
+
+end;
+
+procedure TfrmTurnMeDownMain.WMClose(var Msg: TWMClose);
+var
+  CanClose: Boolean;
+begin
+  // User-initiated close
+  if FSystemClose then begin
+    // System-initiated close; allow application to close automatically
+    inherited;
+  end else begin
+    // User-initiated close
+    CanClose := True;
+    FormCloseQuery(Self, CanClose);
+    if CanClose then
+      inherited;
+  end;
+end;
+
+procedure TfrmTurnMeDownMain.WMEndSession(var Msg: TWMEndSession);
+begin
+  // System-initiated close (e.g., shutdown, logoff)
+  FSystemClose:= True;
+  inherited;
+end;
+
+procedure TfrmTurnMeDownMain.WMQueryEndSession(var Msg: TWMQueryEndSession);
+begin
+  // System-initiated close (e.g., shutdown, logoff)
+  FSystemClose:= True;
+  Msg.Result := 1;
+  inherited;
+end;
+
+procedure TfrmTurnMeDownMain.WMSettingChange(var Msg: TMessage);
+begin
+  if (Msg.WParam = 0) and (PChar(Msg.LParam) = 'intl') then begin
+    tpStart.TimeFormat:= GetTimeFormatFromSystem;
+    tpStop.TimeFormat:= GetTimeFormatFromSystem;
+  end;
 end;
 
 end.

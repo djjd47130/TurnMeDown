@@ -7,7 +7,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   AlphaBlendValue = 235
   Caption = 'Turn Me Down'
   ClientHeight = 533
-  ClientWidth = 609
+  ClientWidth = 554
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -30,7 +30,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object pHint: TRzPanel
     Left = 0
     Top = 510
-    Width = 609
+    Width = 554
     Height = 23
     Align = alBottom
     BorderOuter = fsNone
@@ -50,7 +50,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 603
+    Width = 548
     Height = 45
     Align = alTop
     BorderOuter = fsNone
@@ -79,7 +79,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     end
     object swAutoStart: TToggleSwitch
       AlignWithMargins = True
-      Left = 445
+      Left = 390
       Top = 3
       Width = 155
       Height = 39
@@ -121,7 +121,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object pQuietTimes: TRzPanel
     Left = 0
     Top = 51
-    Width = 609
+    Width = 554
     Height = 70
     Margins.Top = 5
     Align = alTop
@@ -136,7 +136,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 160
+      Width = 206
       Height = 64
       Align = alLeft
       BorderOuter = fsNone
@@ -147,7 +147,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object tpStart: TTimePicker
         Left = 0
         Top = 22
-        Width = 160
+        Width = 206
         Cursor = crHandPoint
         Hint = 'The time to start enforcing quiet time'
         Align = alTop
@@ -167,7 +167,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object StaticText1: TStaticText
         Left = 0
         Top = 0
-        Width = 160
+        Width = 206
         Height = 22
         Align = alTop
         Alignment = taCenter
@@ -179,9 +179,9 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     end
     object pQuietStop: TRzPanel
       AlignWithMargins = True
-      Left = 169
+      Left = 215
       Top = 3
-      Width = 437
+      Width = 336
       Height = 64
       Align = alClient
       BorderOuter = fsNone
@@ -192,7 +192,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object tpStop: TTimePicker
         Left = 0
         Top = 22
-        Width = 437
+        Width = 336
         Cursor = crHandPoint
         Hint = 'The time to stop enforcing quiet time'
         Align = alTop
@@ -212,7 +212,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       object StaticText2: TStaticText
         Left = 0
         Top = 0
-        Width = 437
+        Width = 336
         Height = 22
         Align = alTop
         Alignment = taCenter
@@ -226,7 +226,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object pStatus: TRzPanel
     Left = 0
     Top = 480
-    Width = 609
+    Width = 554
     Height = 30
     Align = alBottom
     BorderOuter = fsNone
@@ -244,7 +244,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     object lblStatus: TLabel
       Left = 0
       Top = 0
-      Width = 609
+      Width = 554
       Height = 30
       Align = alTop
       Alignment = taCenter
@@ -268,7 +268,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     AlignWithMargins = True
     Left = 5
     Top = 164
-    Width = 599
+    Width = 544
     Height = 34
     Cursor = crHandPoint
     Hint = 'Current system volume'
@@ -367,7 +367,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     AlignWithMargins = True
     Left = 5
     Top = 124
-    Width = 599
+    Width = 544
     Height = 34
     Cursor = crHandPoint
     Hint = 'Maximum volume allowed during quiet time'
@@ -466,11 +466,39 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object VolChart: TJDPlotChart
     Left = 0
     Top = 201
-    Width = 609
+    Width = 554
     Height = 168
     Cursor = crCross
-    Hint = 'Click and drag points to control volume'
     Align = alTop
+    Crosshairs = <
+      item
+        CrosshairType = ctMouse
+        Horizontal.Color.Color = clYellow
+        Horizontal.Color.UseStandardColor = False
+        Horizontal.Alpha = 180
+        Horizontal.Width = 1.000000000000000000
+        Horizontal.Visible = True
+        Vertical.Color.Color = clYellow
+        Vertical.Color.UseStandardColor = False
+        Vertical.Alpha = 180
+        Vertical.Width = 1.000000000000000000
+        Vertical.Visible = True
+      end
+      item
+        CrosshairType = ctPlotLine
+        Horizontal.Color.Color = clBlue
+        Horizontal.Color.UseStandardColor = False
+        Horizontal.Alpha = 180
+        Horizontal.Width = 1.000000000000000000
+        Horizontal.Visible = True
+        Vertical.Color.Color = clBlue
+        Vertical.Color.UseStandardColor = False
+        Vertical.Alpha = 180
+        Vertical.Width = 1.000000000000000000
+        Vertical.Visible = True
+        X = 12.000000000000000000
+        Y = 20.000000000000000000
+      end>
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -9
@@ -534,16 +562,6 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     UI.ChartArea.Border.Visible = True
     UI.ChartArea.Color.Color = clBlack
     UI.ChartArea.Color.UseStandardColor = False
-    UI.ChartArea.Crosshairs.Horizontal.Color.StandardColor = fcYellow
-    UI.ChartArea.Crosshairs.Horizontal.Color.UseStandardColor = True
-    UI.ChartArea.Crosshairs.Horizontal.Alpha = 180
-    UI.ChartArea.Crosshairs.Horizontal.Width = 1.000000000000000000
-    UI.ChartArea.Crosshairs.Horizontal.Visible = True
-    UI.ChartArea.Crosshairs.Vertical.Color.StandardColor = fcYellow
-    UI.ChartArea.Crosshairs.Vertical.Color.UseStandardColor = True
-    UI.ChartArea.Crosshairs.Vertical.Alpha = 180
-    UI.ChartArea.Crosshairs.Vertical.Width = 2.000000000000000000
-    UI.ChartArea.Crosshairs.Vertical.Visible = True
     UI.ChartArea.Fill.Color.Color = clMaroon
     UI.ChartArea.Fill.Color.UseStandardColor = False
     UI.ChartArea.Fill.Alpha = 40
@@ -554,7 +572,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     UI.ChartArea.Line.Visible = True
     UI.ChartArea.Points.Alpha = 255
     UI.ChartArea.Points.PointType = ptEllipse
-    UI.ChartArea.Points.Width = 10.000000000000000000
+    UI.ChartArea.Points.Width = 12.000000000000000000
     UI.ChartArea.Points.Color.Color = clMaroon
     UI.ChartArea.Points.Color.UseStandardColor = False
     UI.ChartArea.Points.Visible = True
@@ -566,7 +584,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     UI.ChartArea.PointMouse.Visible = False
     UI.ChartArea.PointHover.Alpha = 255
     UI.ChartArea.PointHover.PointType = ptEllipse
-    UI.ChartArea.PointHover.Width = 12.000000000000000000
+    UI.ChartArea.PointHover.Width = 16.000000000000000000
     UI.ChartArea.PointHover.Color.StandardColor = fcRed
     UI.ChartArea.PointHover.Color.UseStandardColor = True
     UI.ChartArea.PointHover.Visible = True
@@ -587,9 +605,12 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointAdded = VolChartPointAdded
     OnPointMoved = VolChartPointMoved
     OnPointDeleted = VolChartPointDeleted
+    OnHoverMousePoint = VolChartHoverMousePoint
+    OnCustomCrosshair = VolChartCustomCrosshair
+    ExplicitTop = 204
   end
   object Vol: TJDVolumeControls
-    Volume = 32
+    Volume = 72
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16
@@ -598,7 +619,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   object Tmr: TTimer
     Interval = 250
     OnTimer = TmrTimer
-    Left = 56
+    Left = 64
     Top = 376
   end
   object Tray: TRzTrayIcon
@@ -638,7 +659,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
   end
   object AppEvents: TApplicationEvents
     OnHint = AppEventsHint
-    Left = 104
+    Left = 120
     Top = 376
   end
   object TrayImg: TImageList
@@ -1210,6 +1231,12 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Ref.UseStandardColor = False
       end>
     Left = 120
+    Top = 424
+  end
+  object tmrComeForth: TTimer
+    Interval = 50
+    OnTimer = tmrComeForthTimer
+    Left = 264
     Top = 424
   end
 end

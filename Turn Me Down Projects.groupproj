@@ -12,6 +12,12 @@
         <Projects Include="TurnMeDown.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="FMX\TurnMeDownFMX.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\JDLib-master\JDVectorTest\JDVectorTest.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +53,32 @@
     <Target Name="TurnMeDown:Make">
         <MSBuild Projects="TurnMeDown.dproj" Targets="Make"/>
     </Target>
+    <Target Name="TurnMeDownFMX">
+        <MSBuild Projects="FMX\TurnMeDownFMX.dproj"/>
+    </Target>
+    <Target Name="TurnMeDownFMX:Clean">
+        <MSBuild Projects="FMX\TurnMeDownFMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TurnMeDownFMX:Make">
+        <MSBuild Projects="FMX\TurnMeDownFMX.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="JDVectorTest">
+        <MSBuild Projects="..\JDLib-master\JDVectorTest\JDVectorTest.dproj"/>
+    </Target>
+    <Target Name="JDVectorTest:Clean">
+        <MSBuild Projects="..\JDLib-master\JDVectorTest\JDVectorTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="JDVectorTest:Make">
+        <MSBuild Projects="..\JDLib-master\JDVectorTest\JDVectorTest.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="JDLibComponents;DclJDLibComponents;TurnMeDown"/>
+        <CallTarget Targets="JDLibComponents;DclJDLibComponents;TurnMeDown;TurnMeDownFMX;JDVectorTest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="JDLibComponents:Clean;DclJDLibComponents:Clean;TurnMeDown:Clean"/>
+        <CallTarget Targets="JDLibComponents:Clean;DclJDLibComponents:Clean;TurnMeDown:Clean;TurnMeDownFMX:Clean;JDVectorTest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="JDLibComponents:Make;DclJDLibComponents:Make;TurnMeDown:Make"/>
+        <CallTarget Targets="JDLibComponents:Make;DclJDLibComponents:Make;TurnMeDown:Make;TurnMeDownFMX:Make;JDVectorTest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
