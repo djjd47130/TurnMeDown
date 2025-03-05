@@ -36,10 +36,11 @@ The following options are available in the main user interface:
   - Max Volume - The maximum volume allowed during quiet time.
 - When chart is enabled:
   - Plot Chart - Click and drag points around to desired locations.
+  - NOTE: Double-clicking on line creates plot point, and double-clicking on point deletes that point. 
 
 # Open-Source
 
-Turn Me Down is an open-source application, allowing you to modify it to your needs, or contribute to the live project.
+Turn Me Down is an open-source application, allowing you to modify it to your needs, or contribute to the live project. I encourage feedback and contributes of any kind to help keep this project going. 
 
 [View on GitHub](https://github.com/djjd47130/TurnMeDown)
 
