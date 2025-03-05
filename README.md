@@ -3,7 +3,8 @@ Windows tool to restrict volume during quiet hours
 
 Live in an apartment? Listen to a lot of music? Neighbors hate you? Worry no more - Turn Me Down restricts your system volume during the quiet hours which you set. 
 
-![image](https://github.com/user-attachments/assets/61d95b28-de32-466c-94e8-be5b276f6ef3)
+![image](https://github.com/user-attachments/assets/ca61d9eb-7533-4536-ae9c-379fc920dae9)
+
 
 
 
