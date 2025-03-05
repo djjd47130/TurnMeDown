@@ -486,18 +486,18 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
       end
       item
         CrosshairType = ctPlotLine
-        Horizontal.Color.Color = clBlue
+        Horizontal.Color.Color = clLime
         Horizontal.Color.UseStandardColor = False
-        Horizontal.Alpha = 180
-        Horizontal.Width = 1.000000000000000000
+        Horizontal.Alpha = 120
+        Horizontal.Width = 2.000000000000000000
         Horizontal.Visible = True
-        Vertical.Color.Color = clBlue
+        Vertical.Color.Color = clLime
         Vertical.Color.UseStandardColor = False
-        Vertical.Alpha = 180
-        Vertical.Width = 1.000000000000000000
+        Vertical.Alpha = 120
+        Vertical.Width = 2.000000000000000000
         Vertical.Visible = True
-        X = 12.000000000000000000
-        Y = 20.000000000000000000
+        X = 8.500000000000000000
+        Y = 50.000000000000000000
       end>
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
@@ -607,11 +607,10 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
     OnPointDeleted = VolChartPointDeleted
     OnHoverMousePoint = VolChartHoverMousePoint
     OnCustomCrosshair = VolChartCustomCrosshair
-    ExplicitLeft = 3
     ExplicitTop = 204
   end
   object Vol: TJDVolumeControls
-    Volume = 18
+    Volume = 10
     Muted = False
     OnVolumeChanged = VolVolumeChanged
     Left = 16

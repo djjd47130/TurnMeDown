@@ -128,6 +128,7 @@ implementation
 {$R *.dfm}
 
 uses
+  DateUtils,
   StrUtils,
   Math;
 
@@ -353,8 +354,8 @@ begin
 end;
 
 procedure TfrmTurnMeDownMain.BringExistingInstanceToFront;
-var
-  ExistingWnd: HWND;
+//var
+  //ExistingWnd: HWND;
 begin
   // #1 Prevent multiple instances
   // FIXED by dirty mechanism to save "ComeForth" value in registry,
@@ -363,7 +364,6 @@ begin
   var R: TRegistry:= TRegistry.Create(KEY_READ or KEY_WRITE);
   try
     R.RootKey:= HKEY_CURRENT_USER;
-    var Exists: Boolean:= R.KeyExists(SETTINGS_KEY);
     if R.OpenKey(SETTINGS_KEY, True) then begin
       try
         R.WriteBool('ComeForth', True);
@@ -375,20 +375,6 @@ begin
     R.Free;
   end;
 
-  {
-  //NOT WORKING...
-  ExistingWnd := FindWindow(nil, 'Turn Me Down');
-  if ExistingWnd <> 0 then begin
-    // Restore the window if it is minimized
-    if IsIconic(ExistingWnd) then
-      ShowWindow(ExistingWnd, SW_RESTORE)
-    else
-      ShowWindow(ExistingWnd, SW_SHOW);
-    // Bring the window to the front
-    //SetForegroundWindow(ExistingWnd);
-    SetForegroundWindowInternal(ExistingWnd);
-  end;
-  }
 end;
 
 function TfrmTurnMeDownMain.IsActive: Boolean;
@@ -817,12 +803,23 @@ begin
   end;
 end;
 
+function TimeToDecimal(ATime: TTime): Single;
+begin
+  // Convert TTime to decimal hours
+  Result := HourOf(ATime) + (MinuteOf(ATime) / 60) + (SecondOf(ATime) / 3600);
+end;
+
 procedure TfrmTurnMeDownMain.VolChartCustomCrosshair(Sender: TObject;
   Crosshair: TJDPlotChartCrosshair; var X, Y: Single);
 begin
   //TODO: #15 Show Position current volume crosshair...
-
-
+  case Crosshair.Index of
+    0: ;
+    1: begin
+      //Return X as current time...
+      X:= TimeToDecimal(Now);
+    end;
+  end;
 end;
 
 procedure TfrmTurnMeDownMain.VolChartHoverMousePoint(Sender: TObject; X,
