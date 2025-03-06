@@ -104,6 +104,7 @@ type
     FChangingMax: Boolean;
     FChangingVol: Boolean;
     FHover: TPointF;
+    FTimeFormat: String;
     procedure AssertVolume;
     procedure BringExistingInstanceToFront;
     procedure ShowAbout;
@@ -197,7 +198,9 @@ end;
 
 procedure TfrmTurnMeDownMain.AppEventsHint(Sender: TObject);
 begin
-  pHint.Caption:= Application.Hint;
+  if pHint.Tag = 0 then begin
+    pHint.Caption:= Application.Hint;
+  end;
 end;
 
 procedure TfrmTurnMeDownMain.FormClose(Sender: TObject;
@@ -273,6 +276,8 @@ begin
 
   // #11 Properly handle close query
   FSystemClose:= False;
+
+  FTimeFormat:= GetTimeFormatFromSystem;
 
   // #1 Prevent multiple instances
   FMutex := CreateMutex(nil, False, 'TurnMeDown');
@@ -681,6 +686,8 @@ begin
       MaxVol:= 100;
     end;
 
+    lblStatus.Caption:= 'Currently enforcing max volume of '+IntToStr(MaxVol)+'%.';
+
     if Vol.Volume > MaxVol then
       Vol.Volume:= MaxVol;
 
@@ -761,7 +768,11 @@ begin
   end;
 
   // #14 Show data at mouse position
-  VolChart.Hint:= 'Plot point: '+FormatDateTime('h:nn AMPM', DecimalToTime(FHover.X))+': '+FormatFloat('0.###%', FHover.Y);
+  if pHint.Tag = 1 then begin
+    VolChart.Hint:= 'Plot point: '+FormatDateTime(FTimeFormat, DecimalToTime(FHover.X))+': '+FormatFloat('0.###%', FHover.Y);
+    pHint.Caption:= VolChart.Hint;
+  end;
+
 end;
 
 procedure TfrmTurnMeDownMain.DisplayChart(const AVisible: Boolean);
@@ -800,7 +811,7 @@ procedure TfrmTurnMeDownMain.VolChartGetAxisText(Sender: TObject;
 begin
   case Axis of
     caBottom: begin
-      Text:= FormatDateTime('h:nn AMPM', DecimalToTime(Value));
+      Text:= FormatDateTime(FTimeFormat, DecimalToTime(Value));
     end;
     caLeft: ;
     caRight: ;
@@ -817,10 +828,12 @@ end;
 procedure TfrmTurnMeDownMain.VolChartMouseEnter(Sender: TObject);
 begin
   Screen.Cursor:= crNone;
+  pHint.Tag:= 1;
 end;
 
 procedure TfrmTurnMeDownMain.VolChartMouseLeave(Sender: TObject);
 begin
+  pHint.Tag:= 0;
   Screen.Cursor:= crDefault;
   Application.Hint:= '';
 end;
@@ -882,8 +895,10 @@ procedure TfrmTurnMeDownMain.WMSettingChange(var Msg: TMessage);
 begin
   // #10 Respect locale settings
   if (Msg.WParam = 0) and (PChar(Msg.LParam) = 'intl') then begin
-    tpStart.TimeFormat:= GetTimeFormatFromSystem;
-    tpStop.TimeFormat:= GetTimeFormatFromSystem;
+    FTimeFormat:= GetTimeFormatFromSystem;
+    tpStart.TimeFormat:= FTimeFormat;
+    tpStop.TimeFormat:= FTimeFormat;
+    VolChart.Invalidate;
   end;
 end;
 

@@ -496,7 +496,7 @@ object frmTurnMeDownMain: TfrmTurnMeDownMain
         Vertical.Alpha = 120
         Vertical.Width = 1.000000000000000000
         Vertical.Visible = True
-        X = 8.500000000000000000
+        X = 20.500000000000000000
         Y = 50.000000000000000000
       end>
     Font.Charset = DEFAULT_CHARSET
